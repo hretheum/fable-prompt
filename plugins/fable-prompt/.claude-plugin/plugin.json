@@ -1,0 +1,7 @@
+{
+  "name": "fable-prompt",
+  "version": "0.1.0",
+  "description": "Interaktywnie buduje zwalidowany prompt w formacie Whole-Job Handoff pod Claude Fable 5 — zadaje pytania po 9 polach specyfikacji, wyjaśnia konsekwencje wyborów, audytuje wynik i zapisuje czysty plik .md.",
+  "author": { "name": "Eryk Orłowski" },
+  "skills": ["./skills/fable-prompt"]
+}

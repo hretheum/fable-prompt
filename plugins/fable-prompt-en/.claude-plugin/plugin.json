@@ -1,0 +1,7 @@
+{
+  "name": "fable-prompt-en",
+  "version": "0.1.0",
+  "description": "Interactively builds a validated prompt in Whole-Job Handoff format for Claude Fable 5 — asks questions across the 9 spec fields, explains the consequences of each choice, audits the result, and saves a clean .md file. (English variant.)",
+  "author": { "name": "Eryk Orłowski" },
+  "skills": ["./skills/fable-prompt-en"]
+}

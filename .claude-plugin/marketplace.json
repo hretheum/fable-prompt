@@ -1,0 +1,17 @@
+{
+  "name": "hretheum-skills",
+  "owner": { "name": "Eryk Orłowski" },
+  "description": "Skille do spec-driven developmentu i pracy z Claude Fable 5.",
+  "plugins": [
+    {
+      "name": "fable-prompt",
+      "source": "./plugins/fable-prompt",
+      "description": "Interaktywnie buduje zwalidowany prompt w formacie Whole-Job Handoff pod Claude Fable 5 — zadaje pytania po 9 polach specyfikacji, wyjaśnia konsekwencje wyborów, audytuje wynik i zapisuje czysty plik .md. (Wersja polska.)"
+    },
+    {
+      "name": "fable-prompt-en",
+      "source": "./plugins/fable-prompt-en",
+      "description": "Interactively builds a validated prompt in Whole-Job Handoff format for Claude Fable 5 — asks questions across the 9 spec fields, explains the consequences of each choice, audits the result, and saves a clean .md file. (English variant.)"
+    }
+  ]
+}
