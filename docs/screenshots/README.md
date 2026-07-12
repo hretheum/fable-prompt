@@ -1,16 +1,16 @@
-# Screenshots needed here
+# Screenshots
 
-This folder is a placeholder. Drop in real screenshots from Claude Desktop with these exact
-filenames, taken while following "Install in Claude Desktop" in the main README:
+Real screenshots from Claude Desktop, captured while adding this repo as a plugin marketplace
+(Settings → Customize → Plugins → Add → Add marketplace → Add from a repository).
 
-1. `01-customize-plugins-tab.png` — Customize sidebar open, Plugins tab selected.
-2. `02-add-marketplace-dialog.png` — the "+" → "Add marketplace" dialog, empty or with
-   `hretheum/fable-prompt` typed in.
-3. `03-marketplace-synced.png` — after Sync, showing both `fable-prompt` and `fable-prompt-en`
-   listed with an Install button.
-4. `04-installed-confirmation.png` — after clicking Install, showing the confirmation banner /
-   the button changed to "Manage".
+1. `01-plugins-tab.png` — the Plugins tab under Customize, showing installed plugins including
+   `Fable prompt` and `Fable prompt en`.
+2. `02-add-dropdown-menu.png` — the "Add" button dropdown: Add marketplace / Upload plugin /
+   Create with Claude.
+3. `03-add-marketplace-dialog.png` — the "Add marketplace" dialog: Browse Anthropic sources vs.
+   Add from a repository.
+4. `04-repository-url-field.png` — the repository URL field (empty), with the trust warning and
+   Sync button.
+5. `05-repository-autocomplete.png` — the URL field with `hretheum/fable-prompt` autocompleted.
 
-PNG or JPG, no fixed size requirement — GitHub renders whatever you commit. Once these 4 files
-exist here, the `![...]` links in the main README will resolve automatically; no other edits
-needed.
+Referenced from the main [README](../README.md).

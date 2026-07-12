@@ -37,28 +37,29 @@ Plugins from a GitHub marketplace can be installed directly in Claude Desktop (c
 no terminal needed. Skills bundled in a plugin work the same in chat as in Cowork; this plugin has
 no hooks or sub-agents, so there's no functionality difference between the two.
 
-1. Open **Customize** in the left sidebar, then the **Plugins** tab.
+1. Open **Settings**, then under the **Customize** section click **Plugins**.
 
-   ![Customize > Plugins tab](./docs/screenshots/01-customize-plugins-tab.png)
+   ![Plugins tab under Customize](./docs/screenshots/01-plugins-tab.png)
 
-2. Under **Personal plugins**, click the **"+"** button, then **"Add marketplace."**
+2. Click the **"Add"** button (top right), then **"Add marketplace"** from the dropdown.
 
-   ![Add marketplace dialog](./docs/screenshots/02-add-marketplace-dialog.png)
+   ![Add dropdown: Add marketplace / Upload plugin / Create with Claude](./docs/screenshots/02-add-dropdown-menu.png)
 
-3. Paste `hretheum/fable-prompt` and click **Sync**. Both `fable-prompt` (PL) and
-   `fable-prompt-en` (EN) will appear.
+3. In the **"Add marketplace"** dialog, choose **"Add from a repository"** (not "Browse Anthropic
+   sources" — that's Anthropic's own curated marketplaces).
 
-   ![Marketplace synced, both plugins listed](./docs/screenshots/03-marketplace-synced.png)
+   ![Add marketplace dialog with two source options](./docs/screenshots/03-add-marketplace-dialog.png)
 
-4. Click **Install** on the variant you want. The button changes to "Manage" once installed.
+4. In the URL field, type `hretheum/fable-prompt` (it'll autocomplete) and click **Sync**.
 
-   ![Installed confirmation](./docs/screenshots/04-installed-confirmation.png)
+   ![Repository URL field with autocomplete suggestion](./docs/screenshots/04-repository-url-field.png)
+   ![Autocomplete showing hretheum/fable-prompt](./docs/screenshots/05-repository-autocomplete.png)
 
-5. Start a new conversation — the skill activates automatically when it recognizes the context
+5. Both `fable-prompt` (PL) and `fable-prompt-en` (EN) appear in the Plugins list. Click **Install**
+   on the variant you want.
+
+6. Start a new conversation — the skill activates automatically when it recognizes the context
    (or invoke it explicitly by describing what you want: "build me a prompt for Fable 5").
-
-*(Screenshots above are placeholders — see [`docs/screenshots/README.md`](./docs/screenshots/README.md)
-for what to capture and where to drop the files.)*
 
 ### Manual install (no GitHub, single account only)
 
