@@ -1,5 +1,24 @@
 # fable-prompt
 
+## Why even bother
+
+Fable 5 isn't a chat model you fire off quick questions to — it's priced and built for whole,
+multi-day jobs ($10/M input, $50/M output tokens), and treats a task like an unsupervised
+contractor would: give it a vague ask and it'll happily burn a lot of tokens producing something
+plausible-looking instead of what you actually needed. If you're feeding it prompts written for a
+chat model, or don't have a repeatable answer to "when do I even reach for this," you're not
+saving time — you're just spending more per mistake.
+
+This skill exists because "prompt engineering" (clever, compact, safe questions) is the wrong
+mental model for Fable 5. What works is "detailed task imagination" — specifying the entire job
+across 9 fields before the model ever runs — and this skill walks you through exactly that, one
+question at a time, so you can't accidentally skip the part that keeps the run cheap and the
+output trustworthy.
+
+**Read [`docs/why-fable.md`](./docs/why-fable.md) (PL) before your first run** — it distills the
+Anthropic Fable 5 manuals into when to use it, when not to, and what this skill does at each
+step, so you don't have to read three separate documents every time.
+
 Interactively builds a validated prompt in Whole-Job Handoff format for Claude Fable 5 — asks
 questions across the 9 spec fields, explains the consequences of each choice, audits the result, and
 saves a clean `.md` file ready to hand off to Fable 5.
