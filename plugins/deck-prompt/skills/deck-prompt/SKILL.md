@@ -88,8 +88,8 @@ trafiasz do drugiej. Zbieranie pól nie jest sposobem na dowiedzenie się: pola 
 zakładają, nie produkują, więc rozmowa dojdzie do końca i tak, tyle że z tezą zgadniętą po drodze.
 
 Odpowiedzi zachowaj, nie zadawaj tych pytań drugi raz. Zdanie z pytania 1 to jest treść pola TEZA
-(Etap 5) — zapisujesz je dosłownie. Odpowiedzi 2 i 3 są zalążkiem CELU i ŹRÓDEŁ: w Etapach 2 i 7
-dopytujesz o szczegół, którego brakuje, zamiast pytać od zera.
+(Etap 5) — zapisujesz je dosłownie. Odpowiedź 3 jest zalążkiem CELU (Etap 2), odpowiedź 2 —
+zalążkiem ŹRÓDEŁ (Etap 7). W obu dopytujesz o szczegół, którego brakuje, zamiast pytać od zera.
 
 Zapamiętaj swoją ocenę — wracasz do niej w Etapie 12.
 

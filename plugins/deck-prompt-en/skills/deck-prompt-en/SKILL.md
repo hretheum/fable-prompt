@@ -93,8 +93,9 @@ assume a thesis rather than producing one, so the conversation will reach the en
 with a thesis guessed along the way.
 
 Keep the answers; don't ask these questions twice. The sentence from question 1 is the content of
-the THESIS field (Stage 5) — you record it verbatim. Answers 2 and 3 are the seed of GOAL and
-SOURCES: in Stages 2 and 7 you ask for the missing detail rather than starting from scratch.
+the THESIS field (Stage 5) — you record it verbatim. Answer 3 is the seed of GOAL (Stage 2), answer
+2 — the seed of SOURCES (Stage 7). In both, you ask for the missing detail rather than starting from
+scratch.
 
 Remember your assessment — you'll return to it in Stage 12.
 
