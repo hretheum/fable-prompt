@@ -13,6 +13,9 @@ and ask, which means the prompt hasn't done its one job.
 
 Question: "What should happen after this deck is over? What decision should be made, and by whom?"
 
+This question was already partly asked in Stage 1 (question 3) — here you ask for the detail that
+was missing there, rather than starting from scratch.
+
 Consequence to explain: without a goal, the deck describes a topic instead of driving toward
 something.
 
@@ -70,6 +73,9 @@ to CD, which knows the catalog — you don't have it in front of you.
 ## 6. SOURCES
 
 Question: "Where do the numbers and facts come from? Give me files, data, links."
+
+This question was already partly asked in Stage 1 (question 2) — here you ask for the detail that
+was missing there, rather than starting from scratch.
 
 Consequence, stated plainly: **vague sources make Claude Design hallucinate numbers.** A deck with
 a made-up number on a leadership slide is not a cosmetic slip.

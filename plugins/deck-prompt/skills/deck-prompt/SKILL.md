@@ -59,7 +59,8 @@ tego skilla siedzą zwykle w Claude Desktop.
 
 ## Etap 1 — walidacja skali (uczciwa brama, nie formalność)
 
-Zanim zadasz pierwsze pytanie o treść, zapytaj o sam deck: co ma powstać, dla kogo i po co.
+Zanim zadasz pierwsze pytanie o treść, zapytaj o sam deck — nie o temat, tylko o to, czy stoi za
+nim gotowe myślenie.
 
 Kryterium **nie brzmi** „czy deck jest ważny". Turbostrategiczny deck o rzeczy już przemyślanej to
 nadal robota dla CD. Kryterium brzmi:
@@ -87,7 +88,7 @@ trafiasz do drugiej. Zbieranie pól nie jest sposobem na dowiedzenie się: pola 
 zakładają, nie produkują, więc rozmowa dojdzie do końca i tak, tyle że z tezą zgadniętą po drodze.
 
 Odpowiedzi zachowaj, nie zadawaj tych pytań drugi raz. Zdanie z pytania 1 to jest treść pola TEZA
-(Etap 5) — zapisujesz je dosłownie. Odpowiedzi 2 i 3 są zalążkiem ŹRÓDEŁ i CELU: w Etapach 2 i 7
+(Etap 5) — zapisujesz je dosłownie. Odpowiedzi 2 i 3 są zalążkiem CELU i ŹRÓDEŁ: w Etapach 2 i 7
 dopytujesz o szczegół, którego brakuje, zamiast pytać od zera.
 
 Zapamiętaj swoją ocenę — wracasz do niej w Etapie 12.

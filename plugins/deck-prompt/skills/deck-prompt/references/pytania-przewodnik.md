@@ -12,6 +12,9 @@ i zapyta, czyli prompt nie zrobi swojej jedynej roboty.
 
 Pytanie: „Co ma się stać po tym, jak deck się skończy? Jaka decyzja ma zapaść i czyja?"
 
+To pytanie padło już częściowo w Etapie 1 (pytanie 3.) — tutaj dopytujesz o szczegół, którego tam
+zabrakło, zamiast pytać od zera.
+
 Konsekwencja do wyjaśnienia: bez celu deck opisuje temat zamiast do czegoś prowadzić.
 
 **„Poinformować" odbijaj.** To nie jest cel, to opis slajdów. Dopytaj: informujesz po to, żeby kto
@@ -65,6 +68,9 @@ a Ty nie masz go przed sobą.
 ## 6. ŹRÓDŁA TREŚCI
 
 Pytanie: „Skąd bierzemy liczby i fakty? Podaj pliki, dane, linki."
+
+To pytanie padło już częściowo w Etapie 1 (pytanie 2.) — tutaj dopytujesz o szczegół, którego tam
+zabrakło, zamiast pytać od zera.
 
 Konsekwencja do wyjaśnienia dosłownie: **z ogólników CD halucynuje liczby.** Deck z wymyśloną
 liczbą na slajdzie zarządczym to nie jest wpadka kosmetyczna.
