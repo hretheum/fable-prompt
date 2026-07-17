@@ -154,7 +154,7 @@ def main() -> int:
         return 1
 
     reguly = wczytaj_reguly(rules)
-    for lang, plugin in (("pl", "fable-prompt"), ("en", "fable-prompt-en")):
+    for lang, plugin in (("pl", "deck-prompt"), ("en", "deck-prompt-en")):
         cel = args.repo / "plugins" / plugin / "skills" / plugin / "references" / "anty-slop.md"
         cel.parent.mkdir(parents=True, exist_ok=True)
         cel.write_text(generuj_markdown(reguly, lang), encoding="utf-8")
