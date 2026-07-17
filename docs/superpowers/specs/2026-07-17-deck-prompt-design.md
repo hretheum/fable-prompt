@@ -76,12 +76,26 @@ kategorie mogą się zmienić i destylat trzeba przepuścić ponownie. Koszt to 
 Bez zmian względem `fable-prompt`. Claude Code: pomiń. Claude Desktop / Cowork: wymagany MCP
 z dostępem do plików, zapytaj wprost. Inne środowisko: sprawdź, czy narzędzie zapisu w ogóle jest.
 
-### Etap 0 — czy widzisz Efigence DS
+### Etap 0 — nie istnieje (świadomie)
 
-Brama twarda. Skill woła `DesignSync: list_projects`, pokazuje projekty typu design-system, prosi
-o wskazanie Efigence. Następnie `list_files`, żeby zbudować realną listę komponentów.
+Wcześniejsza wersja projektu miała tu twardą bramę: sprawdź przez `DesignSync`, czy użytkownik widzi
+Efigence DS, i wczytaj listę komponentów. Oba powody odpadły.
 
-Bez tej listy prompt nazywałby komponenty z pamięci, czyli zmyślał. Nie ma DSa — nie ma prompta.
+**Dostęp jest gwarantowany przez produkt.** Design system opublikowany w organizacji jest dziedziczony
+automatycznie — projekty tworzone z homescreena Claude Design w obrębie organizacji używają go zamiast
+domyślnego. Nikt w Efi niczego nie podpina. Brama pytałaby o rzecz z definicji prawdziwą.
+
+**Lista komponentów jest niepotrzebna.** Prompt nie enumeruje komponentów — CD dobiera je samo do
+treści, bo ma DS przed sobą. Wyliczanie ich w prompcie dublowałoby informację, którą CD już ma.
+
+Dochodzi do tego wykonalność: mechanizmy listujące komponenty (`DesignSync`, `/design-sync`, Claude
+Design MCP server przez `/design-login`) żyją po stronie terminala. Użytkownicy docelowi siedzą
+w Claude Desktop. Sidebar w Desktop otwiera *aplikację* Claude Design, co nie znaczy, że runtime
+czatu, w którym działa skill, widzi jej projekty. Brama wywalałaby się u każdego użytkownika
+docelowego.
+
+Źródła: [Get started with Claude Design](https://support.claude.com/en/articles/14604416-get-started-with-claude-design),
+[Set up your design system in Claude Design](https://support.claude.com/en/articles/14604397-set-up-your-design-system-in-claude-design).
 
 ### Etap 1 — walidacja skali
 
@@ -120,7 +134,9 @@ i przykładowe pytania w `references/pytania-przewodnik.md`.
 5. **NARRACJA** — ścieżka od tezy do decyzji, na poziomie kamieni milowych, nie slajd po slajdzie.
 6. **ŹRÓDŁA TREŚCI** — konkretne pliki, dane, URL-e. Ogólniki odbijaj: z ogólników CD halucynuje
    liczby.
-7. **KOMPONENTY DS** — z listy z Etapu 0, nie z głowy.
+7. **KOMPONENTY DS** — nie lista, tylko ograniczenie. Prompt instruuje CD, żeby składał wyłącznie
+   z Efigence DS, który ma przed sobą, i zakazuje wymyślania własnych komponentów. Doboru nie
+   przesądzamy — CD dopasuje komponenty do treści lepiej niż skill, który DSa nie widzi.
 8. **ANTY-SLOP** — wstrzykiwane z `references/anty-slop.md`. Nie pytane.
 9. **GRANICE** — czego nie ma na decku, czego nie wolno zmyślić, gdzie wymagane cytowanie źródła.
 
