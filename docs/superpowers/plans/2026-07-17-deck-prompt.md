@@ -17,9 +17,11 @@ Spec: [`docs/superpowers/specs/2026-07-17-deck-prompt-design.md`](../specs/2026-
   przez skrypty, treści commitów. Nie tylko tego, co widzi użytkownik końcowy. (Ta reguła została
   raz złamana w Tasku 1 — nagłówek w `gen_anty_slop.py` trafiał bez ogonków wprost do
   generowanego pliku. Poprawione w `4739a55`. Plan wiózł potem jeszcze przez jakiś czas kopię
-  źródła sprzed tego commita — dlatego Task 1 **nie zawiera już pełnych źródeł, tylko wskaźniki
-  na pliki**: kopia w planie rozjeżdża się z kodem po cichu i przy następnym wykonaniu odtwarza
-  naprawiony błąd.)
+  źródła sprzed tego commita — dlatego **żaden task nie zawiera już pełnych kopii treści plików,
+  tylko wskaźniki na pliki plus kontrakt**: kopia w planie rozjeżdża się z repo po cichu i przy
+  następnym wykonaniu odtwarza naprawiony błąd. Ta sama choroba siedziała potem w Tasku 2 —
+  kopie sprzed `17929ac`, `4671caf` i `fefcb5a` cofały bramę Etapu 1 i kazały wklejać
+  `anty-slop.md` „w całości".)
 - **Odwrotnie dla angielskiego ładunku:** treść wklejana do promptu w wariancie EN nie może
   zawierać ani jednego znaku z `ąćęłńóśźżĄĆĘŁŃÓŚŹŻ`. Pilnuje tego test.
 - **ZERO-DEP:** `gen_anty_slop.py` importuje wyłącznie bibliotekę standardową Pythona. Żadnego pip.
@@ -209,169 +211,99 @@ Create `plugins/deck-prompt/.claude-plugin/plugin.json`:
 
 - [ ] **Step 2: Szkielet promptu**
 
-Create `plugins/deck-prompt/skills/deck-prompt/assets/prompt-template.md`:
+Create `plugins/deck-prompt/skills/deck-prompt/assets/prompt-template.md`.
 
-```markdown
-# DECK: <nazwa>
+> **Źródłem prawdy jest `plugins/deck-prompt/skills/deck-prompt/assets/prompt-template.md`
+> w repo — nie kopia w tym planie.**
+> Plan wiózł tu kiedyś pełną kopię pliku z polem JĘZYK opisanym jako „wklejana w całości" —
+> czyli dokładnie ten błąd, który potem naprawialiśmy (wstrzykiwał do promptu metadane
+> utrzymaniowe). Zamiast kopii — kontrakt, który plik ma spełniać:
 
-## 1. CEL
+**Struktura:** nagłówek `# DECK: <nazwa>`, po nim dziesięć sekcji `## 1.` … `## 10.` w stałej
+kolejności — CEL, GRUPA DOCELOWA, FORMA, TEZA, NARRACJA, ŹRÓDŁA TREŚCI, TRYB MARKI, KOMPONENTY,
+JĘZYK, GRANICE — a na końcu, za poziomą kreską, sekcja `## FAILURE / ESCALATION`.
 
-<Jaka decyzja ma zapaść po tym decku. Nie „poinformować".>
+Osiem pól to placeholdery w nawiasach ostrych (`<…>`): instrukcja dla wypełniającego, nie treść.
+Placeholder mówi, co ma się w polu znaleźć i czego się w nim nie przyjmuje — CEL odbija
+„poinformować", TEZA żąda jednego zdania, NARRACJA żąda roli slajdu opisanej po ludzku
+(„liczba, która ma uderzyć"), a nie nazwą archetypu, ŹRÓDŁA żądają konkretnych plików i danych
+plus rozstrzygnięcia „prawdziwy content czy zaślepki".
 
-## 2. GRUPA DOCELOWA
+Dwa pola niosą treść wprost, bo są ograniczeniem, nie pytaniem:
 
-<Kto siedzi na sali, co już wie, co ich boli, kto się będzie stawiał i dlaczego.>
+- **KOMPONENTY** — zdanie normatywne dla CD: składaj wyłącznie z komponentów podłączonego design
+  systemu, nie wymyślaj własnych, nie redefiniuj tokenów. Dobór komponentu do treści jest jawnie
+  zostawiony CD, bo zna katalog lepiej niż autor promptu.
+- **JĘZYK** — placeholder wskazujący **ładunek** z `references/anty-slop.md`: wszystko między
+  znacznikiem `PROMPT-PAYLOAD-START` a `PROMPT-PAYLOAD-END`, bez samych znaczników i bez
+  komentarza nad nimi.
 
-## 3. FORMA
+**Pułapka, która już nas kosztowała:** nie pisz w tym polu „treść `anty-slop.md` wklejana
+w całości". Cały plik wiezie nad ładunkiem komentarz z metadanymi utrzymaniowymi (skąd plik, jak
+go przegenerować, dlaczego wstrzykujemy treść zamiast nazwy pluginu). W prompcie te zdania są
+rytuałem wklejania kontekstu, który sami odbijamy w audycie (kryterium 3 w
+`references/audyt-kryteria.md`), i łamią własną regułę skilla: plik ma być czystym promptem bez
+metainformacji. Do promptu idzie wyłącznie ładunek.
 
-<Deck mówiony (autor obok, slajd wspiera) czy czytany bez autora (slajd musi nieść całość).>
-
-## 4. TEZA
-
-<Jedno zdanie.>
-
-## 5. NARRACJA
-
-<Ścieżka od tezy do decyzji. Rola każdego slajdu opisana po ludzku („liczba, która ma uderzyć”),
-nie nazwą archetypu — dobór komponentów należy do Ciebie.>
-
-## 6. ŹRÓDŁA TREŚCI
-
-<Konkretne pliki, dane, URL-e. Co jest autorytatywne, a co kontekstowe. Czy content jest prawdziwy,
-czy mają być zaślepki.>
-
-## 7. TRYB MARKI
-
-<Który tryb z design systemu, light czy dark, ile wariantów do eksploracji.>
-
-## 8. KOMPONENTY
-
-Składaj wyłącznie z komponentów design systemu, który masz podłączony. Nie wymyślaj własnych,
-nie redefiniuj tokenów. Dobór komponentu do treści należy do Ciebie — znasz katalog lepiej niż
-autor tego promptu.
-
-## 9. JĘZYK
-
-<Treść sekcji references/anty-slop.md — wklejana w całości.>
-
-## 10. GRANICE
-
-<Czego na decku nie ma. Czego nie wolno zmyślić. Gdzie wymagane cytowanie źródła zamiast pamięci.>
-
----
-
-## FAILURE / ESCALATION
-
-<Jeśli któregoś pola nie da się spełnić — zatrzymaj się i powiedz, zamiast dowozić deck, który
-wygląda dobrze i nie mówi nic. Brakującej liczby nie zgaduj: zostaw widoczną lukę i nazwij ją.>
-```
+**FAILURE / ESCALATION** mówi jedno: jeśli któregoś pola nie da się spełnić — zatrzymaj się
+i powiedz, zamiast dowozić deck, który wygląda dobrze i nie mówi nic. Brakującej liczby nie
+zgaduj: zostaw widoczną lukę i nazwij ją.
 
 - [ ] **Step 3: Przewodnik po polach**
 
-Create `plugins/deck-prompt/skills/deck-prompt/references/pytania-przewodnik.md`:
+Create `plugins/deck-prompt/skills/deck-prompt/references/pytania-przewodnik.md`.
 
-```markdown
-# Przewodnik po polach
+> **Źródłem prawdy jest `plugins/deck-prompt/skills/deck-prompt/references/pytania-przewodnik.md`
+> w repo — nie kopia w tym planie.**
+> Kopia, którą plan tu wiózł, była sprzed poprawek `17929ac`, `4671caf` i `fefcb5a`: kazała wkleić
+> `anty-slop.md` „w całości" i nie znała ani wyjątku TEZA/CEL/ŹRÓDŁA, ani tego, że Etap 1 zadaje
+> trzy pytania, których pola nie powtarzają. Wykonana dosłownie, odtworzyłaby oba naprawione błędy.
+> Zamiast kopii — kontrakt:
 
-Kryterium na to, co w ogóle jest polem:
+**Otwarcie:** kryterium na to, co jest polem, jako cytat blokowy — *„Prompt nie opisuje design
+systemu. Prompt podejmuje decyzje, których DS nie podejmie za nas."* — plus akapit tłumaczący
+podział: wiedza o DSie należy do CD (nie wpisujemy jej), decyzje niewywiedlne z treści należą do
+użytkownika (muszą trafić do pliku, bo inaczej CD zatrzyma się i zapyta, czyli prompt nie zrobi
+swojej jedynej roboty).
 
-> **Prompt nie opisuje design systemu. Prompt podejmuje decyzje, których DS nie podejmie za nas.**
+**Dalej dziesięć sekcji** `## 1.` … `## 10.`, w kolejności pól z szablonu (CEL, GRUPA DOCELOWA,
+FORMA, TEZA, NARRACJA, ŹRÓDŁA TREŚCI, TRYB MARKI, KOMPONENTY, JĘZYK, GRANICE). Wzór sekcji:
+przykładowe pytanie w cudzysłowie + akapit „Konsekwencja:" mówiący, co się zepsuje bez tego pola.
+Czego nie wolno przeoczyć w poszczególnych sekcjach:
 
-Wiedza o tym, co w DSie jest, należy do Claude Design — nie wpisujemy jej. Decyzje, których z treści
-nie da się wywieść, należą do użytkownika — te muszą trafić do pliku, bo inaczej CD się zatrzyma
-i zapyta, czyli prompt nie zrobi swojej jedynej roboty.
-
-## 1. CEL
-
-Pytanie: „Co ma się stać po tym, jak deck się skończy? Jaka decyzja ma zapaść i czyja?"
-
-Konsekwencja do wyjaśnienia: bez celu deck opisuje temat zamiast do czegoś prowadzić.
-
-**„Poinformować" odbijaj.** To nie jest cel, to opis slajdów. Dopytaj: informujesz po to, żeby kto
-co zrobił?
-
-## 2. GRUPA DOCELOWA
-
-Pytanie: „Kto będzie na sali? Co już wie, czego nie musisz tłumaczyć? Kto się będzie stawiał?"
-
-Konsekwencja: bez tego CD napisze treść dla nikogo — czyli dla przeciętnego czytelnika internetu,
-co na decku zarządczym czyta się jak protekcjonalność.
-
-## 3. FORMA
-
-Pytanie: „Deck będzie mówiony, czy ktoś dostanie go mailem i przeczyta sam?"
-
-Konsekwencja: to rozstrzyga gęstość. Slajd mówiony ma nieść hasło i zostawić resztę Tobie; slajd
-czytany musi nieść całość sam. To pole, o którym ludzie zapominają, a rozjeżdża cały content.
-
-## 4. TEZA
-
-Pytanie: „Jednym zdaniem — co ten deck twierdzi?"
-
-Konsekwencja: teza jest kręgosłupem narracji. Jeśli jej nie ma, każdy slajd będzie osobnym bytem.
-
-**Jeśli użytkownik nie potrafi napisać tego zdania — wróć do walidacji skali (Etap 1).** To nie jest
-zacięcie się na sformułowaniu; to sygnał, że konceptu jeszcze nie ma i robota jest dla Fable.
-
-## 5. NARRACJA
-
-Pytanie: „Prowadź mnie od tezy do decyzji. Jakie kroki musi zrobić widz?"
-
-Konsekwencja: bez tego CD ułoży slajdy w kolejności, w jakiej dostał informacje.
-
-Notuj rolę slajdu **po ludzku** — „liczba, która ma uderzyć", „moment, w którym pokazujemy koszt
-zaniechania". Nie nazwę archetypu z katalogu DSa. Dobór należy do CD, które ten katalog zna,
-a Ty nie masz go przed sobą.
-
-## 6. ŹRÓDŁA TREŚCI
-
-Pytanie: „Skąd bierzemy liczby i fakty? Podaj pliki, dane, linki."
-
-Konsekwencja do wyjaśnienia dosłownie: **z ogólników CD halucynuje liczby.** Deck z wymyśloną
-liczbą na slajdzie zarządczym to nie jest wpadka kosmetyczna.
-
-Dopytaj też: content jest prawdziwy, czy mają być zaślepki? (DS zapyta o to sam, jeśli nie
-odpowiemy.)
-
-## 7. TRYB MARKI
-
-Pytanie: „Który tryb marki? Light czy dark? Ile wariantów chcesz zobaczyć?"
-
-Konsekwencja: to jedyne pole mówiące o wyglądzie — i mówi o nim, bo to **decyzja o pozycjonowaniu,
-nie wiedza o DSie.** CD nie wywiedzie jej z treści. Bez tego pola CD zatrzyma się i zapyta,
-zamiast dowieźć deck.
-
-Tryby są zdefiniowane w DSie, nie tutaj. W Efigence DS na 2026-07-17 są trzy:
-
-- **Corporate** — jasny, powściągliwy
-- **Product** — gęsty, ale spokojny
-- **Innovation** — ciemny, gradientowy hero
-
-Jeśli użytkownik nie wie, który — zapytaj o sytuację (zarząd klienta? demo produktu? keynote?)
-i zaproponuj, ale nie decyduj za niego.
-
-## 8. KOMPONENTY
-
-Nie pytaj. To pole jest ograniczeniem, nie listą: „składaj wyłącznie z DSa, nie wymyślaj własnych
-komponentów, nie redefiniuj tokenów".
-
-Nie enumerujemy komponentów, bo CD ma DS przed sobą, zanim przeczyta nasz prompt — wraz z opisem
-przeznaczenia każdego archetypu. Lista w prompcie dublowałaby tę wiedzę i rozjeżdżała się przy
-każdej zmianie DSa.
-
-## 9. JĘZYK
-
-Nie pytaj. Wklej treść `references/anty-slop.md` w całości.
-
-## 10. GRANICE
-
-Pytanie: „Czego na tym decku ma nie być? Czego absolutnie nie wolno zmyślić?"
-
-Konsekwencja: bez granic CD dopowie brakujące elementy, żeby deck wyglądał na kompletny.
-
-Jeśli użytkownik mówi „olej to", „nie ważne", „zrób jak chcesz" — to sygnał ryzyka, nie zgoda.
-Przypomnij łagodnie, przed czym to pole chroni, zamiast pominąć bez słowa.
-```
+- **Pola dziedziczące z Etapu 1 — CEL (pytanie 3.), TEZA (pytanie 1.), ŹRÓDŁA (pytanie 2.).**
+  Każda z tych trzech sekcji mówi wprost, że pytanie już padło i teraz **dopytujesz o brakujący
+  szczegół, zamiast pytać od zera**. Przy TEZIE: odpowiedź z Etapu 1 zapisujesz dosłownie, pytasz
+  drugi raz tylko wtedy, gdy coś ją w międzyczasie podważyło.
+- **CEL** — „poinformować" odbijaj: to nie cel, to opis slajdów. Dopytaj: informujesz po to, żeby
+  kto co zrobił?
+- **FORMA** — mówiony czy czytany bez autora; to rozstrzyga gęstość. Pole, o którym ludzie
+  zapominają, a rozjeżdża cały content.
+- **TEZA** — dwa zapisy naraz. Pierwszy: **nie piszesz tego zdania za użytkownika** — żadnych
+  „czy chodzi Ci o to, że…", żadnych wariantów do wyboru, nawet gdy prosi i nawet gdy widzisz
+  gotowe sformułowanie w tym, co mówi (przytaknie Twojemu, bo brzmi lepiej niż jego, i deck
+  stanie na tezie, której nikt nie sprawdził). Drugi: brak tego zdania **zamyka bramę z Etapu 1**
+  i przenosi rozmowę na ścieżkę Fable — z rozstrzygnięciem, nie po to, by zadać tamte trzy pytania
+  jeszcze raz. Etap 1 przepuścił rozmowę na podstawie zdania, które właśnie się rozpadło; to nowa
+  informacja, nie remis do rozegrania drugi raz.
+- **NARRACJA** — rola slajdu notowana po ludzku („liczba, która ma uderzyć"), nie nazwą archetypu
+  z katalogu DSa.
+- **ŹRÓDŁA TREŚCI** — konsekwencja wyjaśniana dosłownie: **z ogólników CD halucynuje liczby.**
+  Plus dopytanie: content prawdziwy czy zaślepki.
+- **TRYB MARKI** — jedyne pole o wyglądzie, bo to decyzja o pozycjonowaniu, nie wiedza o DSie.
+  Wymień trzy tryby Efigence DS ze stanu na 2026-07-17, po jednej linii: **Corporate** (jasny,
+  powściągliwy), **Product** (gęsty, ale spokojny), **Innovation** (ciemny, gradientowy hero).
+  Gdy użytkownik nie wie — zapytaj o sytuację i zaproponuj, ale nie decyduj za niego.
+- **KOMPONENTY** — nie pytaj; pole jest ograniczeniem, nie listą. Dopisz, dlaczego nie
+  enumerujemy: CD ma DS przed sobą wraz z opisem przeznaczenia archetypów, lista dublowałaby tę
+  wiedzę i rozjeżdżała się przy każdej zmianie DSa.
+- **JĘZYK** — nie pytaj. Wklejasz **ładunek**: wszystko między znacznikiem `PROMPT-PAYLOAD-START`
+  a `PROMPT-PAYLOAD-END`, bez samych znaczników. **Komentarza nad znacznikiem startowym nie
+  wklejasz** — i sekcja mówi dlaczego: to metadane utrzymaniowe dla maintainera repo, a w prompcie
+  byłyby rytuałem wklejania kontekstu, który sami odbijamy w audycie (`audyt-kryteria.md`,
+  kryterium 3).
+- **GRANICE** — „olej to", „nie ważne", „zrób jak chcesz" to sygnał ryzyka, nie zgoda. Przypomnij
+  łagodnie, przed czym pole chroni, zamiast pominąć bez słowa.
 
 - [ ] **Step 4: Kryteria autoaudytu**
 
@@ -413,141 +345,114 @@ zaproponuj ścieżkę Fable. Nie po fakcie.
 
 - [ ] **Step 5: SKILL.md**
 
-Create `plugins/deck-prompt/skills/deck-prompt/SKILL.md`:
+Create `plugins/deck-prompt/skills/deck-prompt/SKILL.md`.
 
-````markdown
----
-name: deck-prompt
-description: Interaktywnie buduje prompt dla Claude Design na deck (prezentację) osadzony w firmowym design systemie. Użyj tego skilla, gdy użytkownik mówi, że chce „zbudować prompt na deck", „przygotować prezentację w Claude Design", „zrobić deck z DSa", albo opisuje prezentację i pyta, jak dobrze zlecić ją modelowi. Uruchamiaj też, gdy ktoś ma gotowy brief na prezentację i chce go przerobić na prompt dla Claude Design. Skill waliduje skalę zadania — jeśli koncept decka dopiero ma powstać, odsyła do Fable, zamiast budować prompt na pustce.
----
+> **Źródłem prawdy jest `plugins/deck-prompt/skills/deck-prompt/SKILL.md` w repo — nie kopia
+> w tym planie.**
+> Plan wiózł tu kopię sprzed `17929ac`, `4671caf` i `fefcb5a`: z bramą Etapu 1 opartą na pytaniu
+> „co, dla kogo, po co" (dziś skill odrzuca to sformułowanie wprost), bez wyjątku
+> TEZA/CEL/ŹRÓDŁA i z poleceniem wklejenia `anty-slop.md` „w całości". Wykonana dosłownie,
+> cofnęłaby wszystkie trzy poprawki. Zamiast kopii — kontrakt:
 
-# Deck Prompt Builder
+**Frontmatter:** `name: deck-prompt` i `description` wyliczający wyzwalacze („zbudować prompt na
+deck", „przygotować prezentację w Claude Design", „zrobić deck z DSa"), gotowy brief do przerobienia
+na prompt, oraz zapowiedź bramy: skill waliduje skalę zadania i odsyła do Fable, gdy koncept decka
+dopiero ma powstać.
 
-Prowadzisz użytkownika przez budowę promptu dla Claude Design (CD), z którego CD wygeneruje deck
-osadzony w firmowym design systemie. Twoja rola: **przewodnik, nie autopilot i nie maszynka do
-potakiwania.**
+**Otwarcie (rola i zasada):** przewodnik, nie autopilot i nie maszynka do potakiwania. Zasada
+wspólna z `fable-prompt`: **każde pole trafia do pliku od razu po ustaleniu, nie zostaje w pamięci
+rozmowy** — finalny `.md` to jedyne źródło prawdy, które trafi do CD. Plus konsekwencja, którą łatwo
+przeoczyć: **skill nie generuje decka ani treści**; „bez markerów AI" to zapis w prompcie, nie krok
+na końcu — kiedy kończysz pracę, żaden slajd jeszcze nie istnieje.
 
-Fundamentalna zasada, ta sama co w `fable-prompt`: **każde pole trafia do pliku od razu po
-ustaleniu, nie zostaje w pamięci rozmowy.** Finalny plik `.md` to jedyne źródło prawdy, które
-trafi do CD.
+**Kryterium na to, co jest polem** — ten sam cytat blokowy co w przewodniku, z uzasadnieniem: CD ma
+DS przed sobą wraz z katalogiem komponentów, więc nie enumerujemy komponentów i nie opisujemy
+tokenów.
 
-Konsekwencja, którą łatwo przeoczyć: **ten skill nie generuje decka ani treści.** Produktem jest
-plik z promptem. Wymóg „bez markerów AI" nie jest krokiem, który wykonujesz na końcu — to zapis
-w prompcie. W chwili, gdy kończysz pracę, żaden slajd jeszcze nie istnieje.
+**Brama pierwsza — Etap wstępny (-1), zapis do pliku.** Twardy warunek wejścia, zawsze na starcie:
+bez zapisu wynik skilla to podgląd w oknie rozmowy, który zniknie. Trzy przypadki: Claude Code
+(natywny zapis, etap pomijany), Claude Desktop / Cowork (wymaga MCP z dostępem do plików,
+rekomendowany Desktop Commander — pytasz wprost i zatrzymujesz się, jeśli go nie ma), inne
+środowisko (sprawdź narzędzie zapisu; jeśli go nie ma, powiedz to zamiast „tworzyć" plik, który
+nigdzie nie wyląduje). Do tego zakaz: **nie sprawdzaj dostępu do design systemu** (DS opublikowany
+w organizacji jest dziedziczony automatycznie — to pytanie o rzecz z definicji prawdziwą) i nie
+wołaj `DesignSync` ani `/design-sync`, bo to narzędzia terminalowe, a użytkownicy siedzą w Claude
+Desktop.
 
-## Kryterium na to, co jest polem
+**Jak rozmawiać:** jedno pytanie na raz; przed pytaniem konsekwencja wyboru w 1-2 zdaniach; po
+odpowiedzi zapis do pliku roboczego i pokazanie, co zapisałeś; pytania zamknięte jako ponumerowana
+lista w tekście (działa też w kanale bez przycisków). Gdy użytkownik nie ma zdania — proponujesz
+domyślny wybór z uzasadnieniem, ale nie decydujesz bez potwierdzenia. **Wyjątek: TEZA, CEL
+i ŹRÓDŁA** — tych trzech pól nie formułujesz za użytkownika i nie podajesz wariantów do wyboru,
+**nawet gdy o to prosi**. To nie są wybory z listy, tylko myślenie, które deck ma opakować; brak
+odpowiedzi jest tu informacją, nie luką do wypełnienia. Podsunięta teza wróci jako „o, tak, dobre"
+i przejdzie przez bramę z Etapu 1 jako cudza.
 
-> **Prompt nie opisuje design systemu. Prompt podejmuje decyzje, których DS nie podejmie za nas.**
+**Brama druga — Etap 1, walidacja skali.** Pytasz o sam deck — **nie o temat**, tylko o to, czy stoi
+za nim gotowe myślenie. Kryterium nie brzmi „czy deck jest ważny" (turbostrategiczny deck o rzeczy
+przemyślanej to nadal robota dla CD), tylko: *„Czy myślenie stojące za deckiem już istnieje?"*
 
-CD ma DS przed sobą, zanim przeczyta nasz prompt — razem z katalogiem komponentów i opisem
-przeznaczenia każdego z nich. Nie enumerujemy komponentów i nie opisujemy tokenów. Wpisujemy
-wyłącznie to, czego CD nie wywiedzie z treści.
+Zapisz wprost, że **odpowiedź na „co, dla kogo, po co" tego nie rozstrzyga** — na takie pytanie
+ludzie odpowiadają tematem, a temat ma każdy. Zamiast tego trzy pytania, pojedynczo, przed
+jakąkolwiek oceną:
 
-## Etap wstępny (-1) — czy potrafisz zapisywać pliki
+1. „Jednym zdaniem — co ten deck **twierdzi**?" (nie: o czym jest)
+2. „Skąd wiesz, że to prawda? Jakie masz dane, w jakim pliku?"
+3. „Kto po tym decku ma zrobić co inaczej?"
 
-Twardy warunek wejścia, zawsze na starcie. Bez zapisu do pliku wynik tego skilla to tylko podgląd
-w oknie rozmowy, który zniknie.
+Nie podpowiadasz odpowiedzi i nie proponujesz wariantów: pytasz, czy myślenie istnieje, a własna
+propozycja unieważnia pytanie, bo użytkownik przytaknie Twojej. Rozstrzygnięcie jest dwustanowe —
+**koncept istnieje**, gdy na wszystkie trzy pada konkret (zdanie twierdzące, nazwane źródło, nazwana
+decyzja) → CD; **konceptu nie ma**, gdy którekolwiek zostaje bez konkretu → Fable, bo CD zgadnie
+tezę z pamięci treningowej i wygeneruje ładny, pusty deck.
 
-- **Claude Code** — natywny zapis, pomiń ten etap.
-- **Claude Desktop / Cowork** — wymaga podłączonego MCP z dostępem do plików (rekomendowany:
-  Desktop Commander). Zapytaj wprost: „Czy masz podłączony MCP z dostępem do plików?" Jeśli nie —
-  zatrzymaj się i zaproponuj instalację, zanim przejdziesz dalej.
-- **Inne środowisko** — sprawdź, czy masz narzędzie do zapisu plików w bieżącej sesji; jeśli nie,
-  powiedz to wprost, zamiast „tworzyć" plik, który nigdzie nie wyląduje.
+**„Stanu trzeciego nie ma"** — to zdanie musi w skillu być, razem z uzasadnieniem: jeśli po tych
+pytaniach nadal nie wiesz, do której kategorii trafiasz, trafiasz do drugiej. Zbieranie pól nie jest
+sposobem na dowiedzenie się — pola z Etapów 2-11 tezę **zakładają, nie produkują**, więc rozmowa
+dojdzie do końca tak czy inaczej, tyle że z tezą zgadniętą po drodze.
 
-**Nie sprawdzaj dostępu do design systemu.** DS opublikowany w organizacji jest dziedziczony przez
-każdy projekt Claude Design automatycznie — pytanie o to jest pytaniem o rzecz z definicji
-prawdziwą. Nie wołaj też `DesignSync` ani `/design-sync`: to narzędzia terminalowe, a użytkownicy
-tego skilla siedzą zwykle w Claude Desktop.
+Odpowiedzi zachowujesz i nie pytasz o nie drugi raz: zdanie z pytania 1. to treść pola TEZA
+(Etap 5), zapisywana **dosłownie**; odpowiedź 3. jest zalążkiem CELU (Etap 2), odpowiedź 2. —
+zalążkiem ŹRÓDEŁ (Etap 7). Ocenę zapamiętujesz — wracasz do niej w Etapie 12.
 
-## Jak rozmawiać z użytkownikiem
+**Ścieżka Fable:** nie budujesz specyfikacji Whole-Job samodzielnie — **wywołujesz skill
+`fable-prompt`**, definiując zadanie jako „wypracuj koncept decka X". Produktem jest plik `.md`
+i komunikat: przełącz model na Fable, odpal ten plik, wróć tu z konceptem. Skill się kończy.
+Fable **nie jest odpalany jako subagent**, nawet jeśli narzędzie na to pozwala — to robota, którą
+użytkownik ma zobaczyć i skorygować, zanim pójdzie w content.
 
-- Jedno pytanie na raz. Nie zarzucaj listą wszystkich pól naraz.
-- Przed każdym pytaniem wyjaśnij **konsekwencję wyboru** w 1-2 zdaniach, konkretnie („bez tego pola
-  CD zgadnie ton z pamięci treningowej — a to jest dokładnie to, czego unikamy").
-- Po ustaleniu odpowiedzi — **zapisz ją od razu do pliku roboczego** i pokaż, co zapisałeś.
-- Jeśli użytkownik nie ma zdania — zaproponuj sensowny domyślny wybór z uzasadnieniem, ale nie
-  decyduj bez potwierdzenia.
-- Pytania z ograniczonym zbiorem odpowiedzi zadawaj jako ponumerowaną listę w tekście (działa
-  wszędzie — w terminalu, czacie, kanale bez przycisków).
+**Etapy 2-11 — skrót listy pól.** Odsyłacz do `references/pytania-przewodnik.md` z poleceniem
+**przeczytania pliku przed Etapem 2**, nie zgadywania z pamięci. Potem lista numerowana 2-11, jedno
+pytanie na raz, w kolejności: **CEL** (jaka decyzja; „poinformować" odbijaj) · **GRUPA DOCELOWA**
+(kto na sali, co wie, kto się będzie stawiał) · **FORMA** (mówiony czy czytany bez autora;
+rozstrzyga gęstość) · **TEZA** (zdanie z Etapu 1 zapisane dosłownie; jeśli teraz się rozłazi →
+brama z Etapu 1 się zamyka, ścieżka Fable) · **NARRACJA** (rola slajdu po ludzku, nie nazwą
+archetypu) · **ŹRÓDŁA TREŚCI** (konkretne pliki; ogólniki odbijaj — z ogólników CD halucynuje
+liczby) · **TRYB MARKI** (tryb DSa, light/dark, liczba wariantów) · **KOMPONENTY** (nie pytaj;
+wpisz ograniczenie) · **JĘZYK** (nie pytaj; **ładunek** z `references/anty-slop.md` — wszystko
+między znacznikiem `PROMPT-PAYLOAD-START` a `PROMPT-PAYLOAD-END`, bez samych znaczników;
+komentarza nad znacznikiem startowym nie wklejasz, to metadane utrzymaniowe repo, nie treść dla
+CD) · **GRANICE** (czego nie ma, czego nie wolno zmyślić, gdzie wymagane cytowanie). Na końcu:
+po zebraniu pól złóż plik wg `assets/prompt-template.md`.
 
-## Etap 1 — walidacja skali (uczciwa brama, nie formalność)
+**Etap 12 — autoaudyt przed zapisem:** kryteria z `references/audyt-kryteria.md`, wynik **do
+rozmowy, nie do pliku** (plik ma być czystym promptem bez metainformacji). Najważniejsze: powrót do
+oceny z Etapu 1 — jeśli okazało się, że konceptu jednak nie ma, mówisz to **teraz**, przed zapisem.
 
-Zanim zadasz pierwsze pytanie o treść, zapytaj o sam deck: co ma powstać, dla kogo i po co.
+**Etap 13 — zapis:** nazwa wzorem `prompt-deck-<krótki-opis-kebab-case>.md`, **pytanie o katalog
+docelowy** (nie zgaduj), zapis, pokazanie ścieżki. Treści pliku nie wklejasz ponownie w całości —
+użytkownik widział ją, budując ją krok po kroku. Po zapisie, w rozmowie: jeśli użytkownik ma skill
+`sztuczny-miodek`, warto przepuścić przez niego gotowy deck po powrocie z CD.
 
-Kryterium **nie brzmi** „czy deck jest ważny". Turbostrategiczny deck o rzeczy już przemyślanej to
-nadal robota dla CD. Kryterium brzmi:
+**Kiedy się zatrzymać (niezależnie od etapu):** sprzeczność z wcześniejszą odpowiedzią w tej samej
+sesji; niemożność sformułowania TEZY jednym zdaniem (sygnał, że konceptu nie ma, nie zacięcie na
+sformułowaniu); „olej to pole" / „nie ważne" przy GRANICACH albo ŹRÓDŁACH (sygnał ryzyka —
+przypominasz łagodnie, przed czym pole chroni, zamiast pominąć bez słowa).
 
-> **Czy myślenie stojące za deckiem już istnieje?**
-
-- **Koncept istnieje** (decyzja zapadła, dane są, teza da się powiedzieć jednym zdaniem) → CD.
-  Deck jest opakowaniem. Lecisz dalej.
-- **Konceptu nie ma** (teza ma dopiero powstać z syntezy wielu źródeł, ze sprzecznościami do
-  rozstrzygnięcia) → **Fable.** CD, dostając taki brief, zgadnie tezę z pamięci treningowej
-  i wygeneruje ładny, pusty deck.
-
-Zapamiętaj swoją ocenę — wracasz do niej w Etapie 12.
-
-### Ścieżka Fable
-
-Nie buduj specyfikacji Whole-Job samodzielnie. **Wywołaj skill `fable-prompt`**, definiując zadanie
-jako „wypracuj koncept decka X". Produktem jest plik `.md` i komunikat do użytkownika: przełącz
-model na Fable, odpal ten plik, wróć tu z konceptem. Skill się kończy.
-
-Nie odpalaj Fable jako subagenta, nawet jeśli narzędzie na to pozwala. To robota, którą użytkownik
-ma zobaczyć i skorygować, zanim pójdzie w content.
-
-## Etapy 2-11 — pola specyfikacji
-
-Pełny opis pól z przykładowymi pytaniami i konsekwencjami jest w `references/pytania-przewodnik.md`
-— **przeczytaj ten plik przed rozpoczęciem Etapu 2**, nie zgaduj z pamięci. W skrócie, w tej
-kolejności, jedno pytanie na raz:
-
-2. **CEL** — jaka decyzja ma zapaść. „Poinformować" odbijaj.
-3. **GRUPA DOCELOWA** — kto na sali, co wie, kto się będzie stawiał.
-4. **FORMA** — mówiony czy czytany bez autora. Rozstrzyga gęstość treści.
-5. **TEZA** — jedno zdanie. Nie da się go napisać → wróć do Etapu 1.
-6. **NARRACJA** — ścieżka od tezy do decyzji. Rola slajdu po ludzku, nie nazwą archetypu.
-7. **ŹRÓDŁA TREŚCI** — konkretne pliki i dane. Ogólniki odbijaj: z ogólników CD halucynuje liczby.
-8. **TRYB MARKI** — który tryb DSa, light/dark, ile wariantów. Nie pytaj o komponenty — tylko o to.
-9. **KOMPONENTY** — nie pytaj. Wpisz ograniczenie: składaj wyłącznie z DSa, nie wymyślaj własnych.
-10. **JĘZYK** — nie pytaj. Wklej `references/anty-slop.md` w całości.
-11. **GRANICE** — czego nie ma, czego nie wolno zmyślić, gdzie wymagane cytowanie.
-
-Po zebraniu pól złóż plik wg `assets/prompt-template.md`.
-
-## Etap 12 — autoaudyt przed zapisem
-
-Przejdź kryteria z `references/audyt-kryteria.md`. Audyt idzie **do rozmowy, nie do pliku** — plik
-ma być czystym promptem bez metainformacji.
-
-Najważniejsze: wróć do oceny z Etapu 1. Jeśli w trakcie zbierania szczegółów okazało się, że
-konceptu jednak nie ma — powiedz to **teraz**, przed zapisem.
-
-## Etap 13 — zapis
-
-Zaproponuj nazwę wzorem `prompt-deck-<krótki-opis-kebab-case>.md` i **zapytaj o katalog docelowy**
-— nie zgaduj. Zapisz plik, pokaż ścieżkę. Nie wklejaj treści pliku ponownie w całości: użytkownik
-widział ją, budując ją krok po kroku.
-
-Po zapisie, w rozmowie (nie w pliku): jeśli użytkownik ma skill `sztuczny-miodek`, warto przepuścić
-przez niego gotowy deck po powrocie z CD.
-
-## Kiedy się zatrzymać i zapytać (niezależnie od etapu)
-
-- Użytkownik podaje coś sprzecznego z wcześniejszą odpowiedzią w tej samej sesji.
-- Użytkownik nie potrafi sformułować TEZY jednym zdaniem — to nie jest zacięcie na sformułowaniu,
-  to sygnał, że konceptu nie ma.
-- Użytkownik mówi „olej to pole", „nie ważne" przy GRANICACH albo ŹRÓDŁACH — to sygnał ryzyka.
-  Przypomnij łagodnie, przed czym to pole chroni, zamiast pominąć bez słowa.
-
-## Pliki pomocnicze
-
-- `assets/prompt-template.md` — szkielet finalnego promptu (10 pól + FAILURE/ESCALATION).
-- `references/pytania-przewodnik.md` — pełny opis pól z przykładowymi pytaniami.
-- `references/audyt-kryteria.md` — kryteria autoaudytu z Etapu 12.
-- `references/anty-slop.md` — **plik generowany**, wstrzykiwany do pola JĘZYK. Nie edytuj ręcznie.
-````
+**Pliki pomocnicze** — sekcja zamykająca, cztery pozycje: `assets/prompt-template.md`,
+`references/pytania-przewodnik.md`, `references/audyt-kryteria.md` oraz `references/anty-slop.md`
+jako **plik generowany**, wstrzykiwany do pola JĘZYK, którego nie edytuje się ręcznie i z którego
+do promptu idzie **wyłącznie ładunek** (komentarz nad nim jest dla maintainera repo).
 
 - [ ] **Step 6: Sprawdź, czy skill jest widoczny i spójny**
 
@@ -796,4 +701,8 @@ Luk nie znalazłem.
 
 **Placeholdery:** brak `TBD` i `TODO`. Task 3 nie powtarza treści plików z Taska 2 — to świadomy wyjątek od reguły „repeat the code": pliki są tłumaczeniem 1:1 istniejącego artefaktu, a wklejenie ich drugi raz w wersji angielskiej dałoby ~400 linii, które i tak trzeba porównać z oryginałem. Zamiast tego Task 3 wskazuje pliki źródłowe, wylicza nazwy pól po angielsku i wypisuje trzy zdania-kotwice, których nie wolno przetłumaczyć maszynowo.
 
-**Spójność typów:** `wczytaj_reguly`, `kategorie_dla_jezyka`, `zbuduj_ladunek`, `wytnij_ladunek`, `generuj_markdown`, `NieznanaKategoria`, `ZAKAZY`, `RAMA` — nazwy zgodne między testem (Task 1 Step 1) a implementacją (Step 3). Od czasu poprawek z recenzji końcowej Task 1 nie wkleja źródeł, tylko wskazuje pliki i opisuje kontrakt — więc rozjazd nazw plan↔kod przestał być możliwy. Liczby kategorii w Step 5 (6 PL / 7 EN) policzone z prawdziwego `rules.json`.
+**Spójność typów:** `wczytaj_reguly`, `kategorie_dla_jezyka`, `zbuduj_ladunek`, `wytnij_ladunek`, `generuj_markdown`, `NieznanaKategoria`, `ZAKAZY`, `RAMA` — nazwy zgodne między testem (Task 1 Step 1) a implementacją (Step 3). Ani Task 1, ani Task 2 nie wkleja już treści plików — wskazują pliki w repo i opisują kontrakt, więc rozjazd plan↔repo przestał być możliwy w obu.
+
+Ta gwarancja obejmowała kiedyś wyłącznie Task 1, i to tylko na poziomie **nazw**. Task 2 wiózł w tym czasie pełne kopie `prompt-template.md`, `pytania-przewodnik.md` i `SKILL.md` sprzed `17929ac`, `4671caf` i `fefcb5a` — z poleceniem wklejenia `anty-slop.md` „w całości" (zapisanym trzy razy, czyli defekt, który naprawialiśmy, w wersji dosłownej), z bramą Etapu 1 opartą na „co, dla kogo, po co" i bez wyjątku TEZA/CEL/ŹRÓDŁA. Rozjazd treści plan↔repo istniał więc realnie, mimo że nazwy się zgadzały. Zdiffowano wszystkie kopie w planie z repo: **Task 2 Steps 2, 3 i 5 poprawione** tym samym zabiegiem co Task 1 (wskaźnik + kontrakt). Zgodne i zostawione bez zmian: `plugin.json` (Task 2 Step 1), `audyt-kryteria.md` (Task 2 Step 4), `marketplace.json` (Task 4 Step 1). Taski 3 i 5 kopii treści nie zawierają — Task 3 wskazuje pliki źródłowe z Taska 2, Task 5 opisuje scenariusze próby.
+
+Liczby kategorii w Step 5 (6 PL / 7 EN) policzone z prawdziwego `rules.json`.
