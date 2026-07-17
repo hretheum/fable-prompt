@@ -111,7 +111,12 @@ knowledge and go stale with every DS change.
 
 ## 9. LANGUAGE
 
-Don't ask. Paste the content of `references/anty-slop.md` in full.
+Don't ask. Paste the **payload** from `references/anty-slop.md`: everything between the
+`PROMPT-PAYLOAD-START` and `PROMPT-PAYLOAD-END` markers, excluding the markers themselves.
+
+Don't paste the comment above the start marker. That's maintenance metadata — it tells the repo
+maintainer where the file comes from and how to regenerate it. In the prompt it would be exactly the
+context-pasting ritual we push back on in the audit (`references/audit-criteria.md`, criterion 3).
 
 ## 10. BOUNDARIES
 

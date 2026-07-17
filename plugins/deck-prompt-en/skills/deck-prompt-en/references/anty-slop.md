@@ -1,47 +1,54 @@
 <!-- PLIK GENEROWANY — nie edytuj ręcznie.
      Źródło: rules.json w https://github.com/hretheum/sztuczny-miodek
      Regeneracja: python3 tools/gen_anty_slop.py --miodek <ścieżka-do-klona>
+
+     Do promptu wkleja się WYŁĄCZNIE ładunek — wszystko między znacznikiem PROMPT-PAYLOAD-START
+     a znacznikiem PROMPT-PAYLOAD-END, bez samych znaczników. Ten komentarz jest metadaną
+     utrzymaniową i do promptu nie trafia.
+
+     Dlaczego wstrzykujemy treść, a nie nazwę pluginu: Claude Design nie ładuje pluginów
+     Claude Code, więc odwołanie do `sztuczny-miodek` nic by mu nie powiedziało.
 -->
 
-# Anty-slop — sekcja wstrzykiwana do promptu
+<!-- PROMPT-PAYLOAD-START -->
 
-Poniższa treść trafia do promptu dla Claude Design **jako treść**, nie jako odwołanie do pluginu.
-Claude Design nie ładuje pluginów Claude Code, więc nazwa `sztuczny-miodek` nic by mu nie powiedziała.
+# Anti-slop — language rules
 
-Przy konflikcie z regułami copy Efigence DS **wygrywa DS** — to jego marka.
+Where this conflicts with the Efigence DS copy rules, **the DS wins** — it is their brand.
 
+## Hard bans
 
-## Zakazy twarde
+_(none in this language layer)_
 
-_(brak w tej warstwie językowej)_
-
-
-## Do świadomej decyzji
+## Judgement call
 
 ### Antithesis
 
-Never write „not only… but also” or „it's not X, it's Y” as an ornament.
+Never write "not only… but also" or "it's not X, it's Y" as an ornament.
 
 ### Clichés and signposts
 
-No „it's worth noting”, „at the end of the day”, „in today's fast-paced world”.
+No "it's worth noting", "at the end of the day", "in today's fast-paced world".
 
 ### Closing signposts
 
-Do not open the closing slide with „In conclusion” or „To sum up”.
+Do not open the closing slide with "In conclusion" or "To sum up".
 
 ### Hedging
 
-One hedge at most. Never „may potentially”, „could possibly”.
+One hedge at most. Never "may potentially", "could possibly".
 
 ### Parallelism
 
-Avoid mirrored constructions built for cadence rather than meaning („self-serve and self-heal”).
+Avoid mirrored constructions built for cadence rather than meaning ("self-serve and self-heal").
 
 ### Empty superlatives
 
-No „seamless”, „robust”, „cutting-edge”, „game-changing” without a number behind them.
+No "seamless", "robust", "cutting-edge", "game-changing" without a number behind them.
 
 ### Triads
 
-Do not group three parallel adjectives or nouns for rhythm („fast, simple, powerful”). Name the one that matters.
+Do not group three parallel adjectives or nouns for rhythm ("fast, simple, powerful"). Name the one that matters.
+
+
+<!-- PROMPT-PAYLOAD-END -->

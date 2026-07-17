@@ -117,7 +117,10 @@ kolejności, jedno pytanie na raz:
 7. **ŹRÓDŁA TREŚCI** — konkretne pliki i dane. Ogólniki odbijaj: z ogólników CD halucynuje liczby.
 8. **TRYB MARKI** — który tryb DSa, light/dark, ile wariantów. Nie pytaj o komponenty — tylko o to.
 9. **KOMPONENTY** — nie pytaj. Wpisz ograniczenie: składaj wyłącznie z DSa, nie wymyślaj własnych.
-10. **JĘZYK** — nie pytaj. Wklej `references/anty-slop.md` w całości.
+10. **JĘZYK** — nie pytaj. Wklej **ładunek** z `references/anty-slop.md`: wszystko między
+    znacznikiem `PROMPT-PAYLOAD-START` a znacznikiem `PROMPT-PAYLOAD-END`, bez samych znaczników.
+    Komentarza nad znacznikiem startowym nie wklejaj — to metadane utrzymaniowe repo, nie treść
+    dla CD.
 11. **GRANICE** — czego nie ma, czego nie wolno zmyślić, gdzie wymagane cytowanie.
 
 Po zebraniu pól złóż plik wg `assets/prompt-template.md`.
@@ -153,3 +156,5 @@ przez niego gotowy deck po powrocie z CD.
 - `references/pytania-przewodnik.md` — pełny opis pól z przykładowymi pytaniami.
 - `references/audyt-kryteria.md` — kryteria autoaudytu z Etapu 12.
 - `references/anty-slop.md` — **plik generowany**, wstrzykiwany do pola JĘZYK. Nie edytuj ręcznie.
+  Do promptu idzie wyłącznie ładunek (między znacznikami `PROMPT-PAYLOAD-START` i
+  `PROMPT-PAYLOAD-END`); komentarz nad nim jest dla maintainera repo.

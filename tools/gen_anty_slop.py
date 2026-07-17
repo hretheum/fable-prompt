@@ -8,6 +8,15 @@ w rules.json jest pisane pod linter, a opisy markerów angielskich są po polsku
 Skrypt jest utrzymaniowy: odpala go maintainer po zmianie reguł w miodku,
 NIE skill w trakcie rozmowy z użytkownikiem.
 
+Generowany plik ma dwie warstwy, rozdzielone znacznikami:
+
+* **metadane** — komentarz dla człowieka czytającego repo (skąd plik, jak go przegenerować,
+  dlaczego wstrzykujemy treść zamiast nazwy pluginu). Zostają po polsku w obu wariantach,
+  bo ich czytelnikiem jest maintainer tego repo. Do promptu NIE trafiają.
+* **ładunek** — wszystko między ZNACZNIK_START a ZNACZNIK_KONIEC. To jedyna część wklejana
+  do promptu dla Claude Design. Jest w całości w języku wariantu: nagłówki, komunikat o pustej
+  sekcji i reguła pierwszeństwa DSa.
+
 Użycie:
     python3 tools/gen_anty_slop.py --miodek ~/dev/sztuczny-miodek-impl
 """
@@ -53,50 +62,79 @@ ZAKAZY = {
         "Żadnych nagłówków „Kluczowe wnioski”, „Podsumowanie”, „Wprowadzenie”. Nagłówek slajdu "
         "ma nieść tezę tego slajdu.",
     ),
+    # Zakazy angielskie cytują przykłady angielskimi cudzysłowami (" "), nie polskimi („ ”).
     "EN-ANTI": (
         "Antithesis",
-        "Never write „not only… but also” or „it's not X, it's Y” as an ornament.",
+        'Never write "not only… but also" or "it\'s not X, it\'s Y" as an ornament.',
     ),
     "EN-TRIAD": (
         "Triads",
-        "Do not group three parallel adjectives or nouns for rhythm („fast, simple, powerful”). "
+        'Do not group three parallel adjectives or nouns for rhythm ("fast, simple, powerful"). '
         "Name the one that matters.",
     ),
     "EN-PARA": (
         "Parallelism",
         "Avoid mirrored constructions built for cadence rather than meaning "
-        "(„self-serve and self-heal”).",
+        '("self-serve and self-heal").',
     ),
     "EN-CLICHE": (
         "Clichés and signposts",
-        "No „it's worth noting”, „at the end of the day”, „in today's fast-paced world”.",
+        'No "it\'s worth noting", "at the end of the day", "in today\'s fast-paced world".',
     ),
     "EN-HEDGE": (
         "Hedging",
-        "One hedge at most. Never „may potentially”, „could possibly”.",
+        'One hedge at most. Never "may potentially", "could possibly".',
     ),
     "EN-SUPER": (
         "Empty superlatives",
-        "No „seamless”, „robust”, „cutting-edge”, „game-changing” without a number behind them.",
+        'No "seamless", "robust", "cutting-edge", "game-changing" without a number behind them.',
     ),
     "EN-CONCL": (
         "Closing signposts",
-        "Do not open the closing slide with „In conclusion” or „To sum up”.",
+        'Do not open the closing slide with "In conclusion" or "To sum up".',
     ),
 }
 
-NAGLOWEK = """<!-- PLIK GENEROWANY — nie edytuj ręcznie.
+# Nazwy znaczników są osobno od samych znaczników, bo metadane wymieniają je z nazwy. Gdyby
+# metadane zawierały znacznik dosłownie, wystąpiłby w pliku dwa razy i nie ciąłby jednoznacznie.
+NAZWA_START = "PROMPT-PAYLOAD-START"
+NAZWA_KONIEC = "PROMPT-PAYLOAD-END"
+ZNACZNIK_START = f"<!-- {NAZWA_START} -->"
+ZNACZNIK_KONIEC = f"<!-- {NAZWA_KONIEC} -->"
+
+# Metadane: dla maintainera repo, nie dla Claude Design. Poza ładunkiem, więc do promptu nie trafią.
+# Zostają po polsku także w wariancie EN — ich czytelnikiem jest maintainer tego repo.
+METADANE = f"""<!-- PLIK GENEROWANY — nie edytuj ręcznie.
      Źródło: rules.json w https://github.com/hretheum/sztuczny-miodek
      Regeneracja: python3 tools/gen_anty_slop.py --miodek <ścieżka-do-klona>
--->
 
-# Anty-slop — sekcja wstrzykiwana do promptu
+     Do promptu wkleja się WYŁĄCZNIE ładunek — wszystko między znacznikiem {NAZWA_START}
+     a znacznikiem {NAZWA_KONIEC}, bez samych znaczników. Ten komentarz jest metadaną
+     utrzymaniową i do promptu nie trafia.
 
-Poniższa treść trafia do promptu dla Claude Design **jako treść**, nie jako odwołanie do pluginu.
-Claude Design nie ładuje pluginów Claude Code, więc nazwa `sztuczny-miodek` nic by mu nie powiedziała.
+     Dlaczego wstrzykujemy treść, a nie nazwę pluginu: Claude Design nie ładuje pluginów
+     Claude Code, więc odwołanie do `sztuczny-miodek` nic by mu nie powiedziało.
+-->"""
 
-Przy konflikcie z regułami copy Efigence DS **wygrywa DS** — to jego marka.
-"""
+# Rama ładunku, per warstwa językowa. Ładunek jest w całości w języku wariantu — łącznie z regułą
+# pierwszeństwa DSa, która jest treścią normatywną dla Claude Design, a nie notatką dla maintainera.
+RAMA = {
+    "pl": {
+        "tytul": "# Anty-slop — reguły języka",
+        "pierwszenstwo": "Przy konflikcie z regułami copy Efigence DS **wygrywa DS** — to jego marka.",
+        "twarde": "## Zakazy twarde",
+        "przeglad": "## Do świadomej decyzji",
+        "pusto": "_(brak w tej warstwie językowej)_",
+    },
+    "en": {
+        "tytul": "# Anti-slop — language rules",
+        "pierwszenstwo": "Where this conflicts with the Efigence DS copy rules, **the DS wins** — "
+        "it is their brand.",
+        "twarde": "## Hard bans",
+        "przeglad": "## Judgement call",
+        "pusto": "_(none in this language layer)_",
+    },
+}
 
 
 def wczytaj_reguly(sciezka: Path) -> list:
@@ -119,7 +157,9 @@ def _klasa_kategorii(reguly: list, kategoria: str) -> str:
     return "block" if "block" in klasy else "review"
 
 
-def generuj_markdown(reguly: list, lang: str) -> str:
+def zbuduj_ladunek(reguly: list, lang: str) -> str:
+    """Składa ładunek — jedyną część pliku wklejaną do promptu, w całości w języku wariantu."""
+    rama = RAMA[lang]
     kategorie = kategorie_dla_jezyka(reguly, lang)
 
     nieznane = [k for k in kategorie if k not in ZAKAZY]
@@ -135,11 +175,43 @@ def generuj_markdown(reguly: list, lang: str) -> str:
         wpis = f"### {naglowek}\n\n{tresc}\n"
         (twarde if _klasa_kategorii(reguly, k) == "block" else przeglad).append(wpis)
 
-    czesci = [NAGLOWEK, "\n## Zakazy twarde\n"]
-    czesci.append("\n".join(twarde) if twarde else "_(brak w tej warstwie językowej)_\n")
-    czesci.append("\n## Do świadomej decyzji\n")
-    czesci.append("\n".join(przeglad) if przeglad else "_(brak w tej warstwie językowej)_\n")
+    czesci = [
+        rama["tytul"],
+        "",
+        rama["pierwszenstwo"],
+        "",
+        rama["twarde"],
+        "",
+        "\n".join(twarde) if twarde else rama["pusto"] + "\n",
+        rama["przeglad"],
+        "",
+        "\n".join(przeglad) if przeglad else rama["pusto"] + "\n",
+    ]
     return "\n".join(czesci)
+
+
+def wytnij_ladunek(markdown: str) -> str:
+    """Zwraca sam ładunek, bez znaczników i metadanych. Odwrotność generuj_markdown().
+
+    Używane przez testy i przez każdego, kto chce sprawdzić, co realnie wjeżdża do promptu.
+    """
+    for znacznik in (ZNACZNIK_START, ZNACZNIK_KONIEC):
+        wystapien = markdown.count(znacznik)
+        if wystapien != 1:
+            raise ValueError(
+                f"Znacznik {znacznik} występuje {wystapien} razy zamiast raz — ładunku nie da się "
+                f"odciąć jednoznacznie."
+            )
+    _, reszta = markdown.split(ZNACZNIK_START, 1)
+    ladunek, _ = reszta.split(ZNACZNIK_KONIEC, 1)
+    return ladunek.strip("\n")
+
+
+def generuj_markdown(reguly: list, lang: str) -> str:
+    """Metadane utrzymaniowe + ładunek odcięty znacznikami."""
+    return "\n\n".join(
+        [METADANE, ZNACZNIK_START, zbuduj_ladunek(reguly, lang), ZNACZNIK_KONIEC]
+    ) + "\n"
 
 
 def main() -> int:

@@ -38,7 +38,8 @@ autor tego promptu.
 
 ## 9. JĘZYK
 
-<Treść sekcji references/anty-slop.md — wklejana w całości.>
+<Ładunek z references/anty-slop.md — wszystko między znacznikiem PROMPT-PAYLOAD-START
+a znacznikiem PROMPT-PAYLOAD-END, bez samych znaczników i bez komentarza nad nimi.>
 
 ## 10. GRANICE
 

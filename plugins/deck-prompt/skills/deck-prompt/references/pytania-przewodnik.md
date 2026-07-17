@@ -106,7 +106,12 @@ każdej zmianie DSa.
 
 ## 9. JĘZYK
 
-Nie pytaj. Wklej treść `references/anty-slop.md` w całości.
+Nie pytaj. Wklej **ładunek** z `references/anty-slop.md`: wszystko między znacznikiem
+`PROMPT-PAYLOAD-START` a znacznikiem `PROMPT-PAYLOAD-END`, bez samych znaczników.
+
+Komentarza nad znacznikiem startowym nie wklejaj. To metadane utrzymaniowe — mówią maintainerowi
+repo, skąd plik pochodzi i jak go przegenerować. W prompcie byłyby rytuałem wklejania kontekstu,
+który sami odbijamy w audycie (`references/audyt-kryteria.md`, kryterium 3).
 
 ## 10. GRANICE
 

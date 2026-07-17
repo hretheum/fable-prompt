@@ -1,22 +1,26 @@
 <!-- PLIK GENEROWANY — nie edytuj ręcznie.
      Źródło: rules.json w https://github.com/hretheum/sztuczny-miodek
      Regeneracja: python3 tools/gen_anty_slop.py --miodek <ścieżka-do-klona>
+
+     Do promptu wkleja się WYŁĄCZNIE ładunek — wszystko między znacznikiem PROMPT-PAYLOAD-START
+     a znacznikiem PROMPT-PAYLOAD-END, bez samych znaczników. Ten komentarz jest metadaną
+     utrzymaniową i do promptu nie trafia.
+
+     Dlaczego wstrzykujemy treść, a nie nazwę pluginu: Claude Design nie ładuje pluginów
+     Claude Code, więc odwołanie do `sztuczny-miodek` nic by mu nie powiedziało.
 -->
 
-# Anty-slop — sekcja wstrzykiwana do promptu
+<!-- PROMPT-PAYLOAD-START -->
 
-Poniższa treść trafia do promptu dla Claude Design **jako treść**, nie jako odwołanie do pluginu.
-Claude Design nie ładuje pluginów Claude Code, więc nazwa `sztuczny-miodek` nic by mu nie powiedziała.
+# Anty-slop — reguły języka
 
 Przy konflikcie z regułami copy Efigence DS **wygrywa DS** — to jego marka.
-
 
 ## Zakazy twarde
 
 ### Antyteza redefinicyjna
 
 Nigdy nie buduj zdania wzorem „To nie X — to Y”. To najsilniejszy marker maszynowego tekstu. Powiedz wprost, czym rzecz jest.
-
 
 ## Do świadomej decyzji
 
@@ -39,3 +43,6 @@ Nie zapowiadaj, że zaraz powiesz coś ważnego — powiedz to. Żadnych „wart
 ### Nagłówki-klisze
 
 Żadnych nagłówków „Kluczowe wnioski”, „Podsumowanie”, „Wprowadzenie”. Nagłówek slajdu ma nieść tezę tego slajdu.
+
+
+<!-- PROMPT-PAYLOAD-END -->

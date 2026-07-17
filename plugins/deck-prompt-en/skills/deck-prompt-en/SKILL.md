@@ -127,7 +127,10 @@ memory. In brief, in this order, one question at a time:
    about this.
 9. **COMPONENTS** — don't ask. Write the constraint: compose only from the DS, don't invent your
    own.
-10. **LANGUAGE** — don't ask. Paste `references/anty-slop.md` in full.
+10. **LANGUAGE** — don't ask. Paste the **payload** from `references/anty-slop.md`: everything
+    between the `PROMPT-PAYLOAD-START` and `PROMPT-PAYLOAD-END` markers, excluding the markers
+    themselves. Don't paste the comment above the start marker — that's repo maintenance metadata,
+    not content for CD.
 11. **BOUNDARIES** — what's excluded, what must not be invented, where citations are required.
 
 Once the fields are collected, assemble the file per `assets/prompt-template.md`.
@@ -163,4 +166,5 @@ it's worth running the finished deck through it after it comes back from CD.
 - `references/questions-guide.md` — full description of the fields with example questions.
 - `references/audit-criteria.md` — self-audit criteria from Stage 12.
 - `references/anty-slop.md` — **generated file**, injected into the LANGUAGE field. Do not edit by
-  hand.
+  hand. Only the payload goes into the prompt (between the `PROMPT-PAYLOAD-START` and
+  `PROMPT-PAYLOAD-END` markers); the comment above it is for the repo maintainer.

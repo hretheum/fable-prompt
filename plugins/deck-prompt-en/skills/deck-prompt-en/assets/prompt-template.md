@@ -39,7 +39,8 @@ the author of this prompt.
 
 ## 9. LANGUAGE
 
-<Content of references/anty-slop.md — pasted in full.>
+<Payload from references/anty-slop.md — everything between the PROMPT-PAYLOAD-START and
+PROMPT-PAYLOAD-END markers, excluding the markers themselves and the comment above them.>
 
 ## 10. BOUNDARIES
 

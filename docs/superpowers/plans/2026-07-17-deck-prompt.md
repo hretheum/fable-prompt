@@ -15,8 +15,13 @@ Spec: [`docs/superpowers/specs/2026-07-17-deck-prompt-design.md`](../specs/2026-
 - **Polskie diakrytyki wszędzie:** ą ć ę ł ń ó ś ź ż. Nigdy ASCII. Dotyczy **każdego** polskiego
   tekstu, jaki powstaje: treści skilli, docstringów i komentarzy w kodzie, stringów wypisywanych
   przez skrypty, treści commitów. Nie tylko tego, co widzi użytkownik końcowy. (Ta reguła została
-  raz złamana w Tasku 1 — `NAGLOWEK` w `gen_anty_slop.py` trafiał bez ogonków wprost do
-  generowanego pliku. Poprawione w `4739a55`.)
+  raz złamana w Tasku 1 — nagłówek w `gen_anty_slop.py` trafiał bez ogonków wprost do
+  generowanego pliku. Poprawione w `4739a55`. Plan wiózł potem jeszcze przez jakiś czas kopię
+  źródła sprzed tego commita — dlatego Task 1 **nie zawiera już pełnych źródeł, tylko wskaźniki
+  na pliki**: kopia w planie rozjeżdża się z kodem po cichu i przy następnym wykonaniu odtwarza
+  naprawiony błąd.)
+- **Odwrotnie dla angielskiego ładunku:** treść wklejana do promptu w wariancie EN nie może
+  zawierać ani jednego znaku z `ąćęłńóśźżĄĆĘŁŃÓŚŹŻ`. Pilnuje tego test.
 - **ZERO-DEP:** `gen_anty_slop.py` importuje wyłącznie bibliotekę standardową Pythona. Żadnego pip.
 - **Skill nie woła `DesignSync`** ani żadnego mechanizmu czytającego Claude Design. Użytkownicy docelowi siedzą w Claude Desktop, gdzie tych narzędzi nie ma.
 - **Prompt nie enumeruje komponentów DSa.** Kryterium na to, co jest polem: *prompt nie opisuje DSa, tylko podejmuje decyzje, których DS nie podejmie za nas.*
@@ -52,70 +57,30 @@ Jedyny realny kod w całym przedsięwzięciu i jedyne miejsce, gdzie coś może 
 
 **Interfaces:**
 - Consumes: `rules.json` z klona miodka (ścieżka podana argumentem `--miodek`). Format wpisu: `{"id": str, "lang": "pl"|"en"|"both", "klasa": "block"|"review", "pattern": str, "opis": str}`.
-- Produces: funkcje `wczytaj_reguly(sciezka) -> list[dict]`, `kategorie_dla_jezyka(reguly, lang) -> list[str]`, `generuj_markdown(reguly, lang) -> str`. Task 2 i 3 konsumują wyłącznie plik wynikowy, nie te funkcje.
+- Produces: funkcje `wczytaj_reguly(sciezka) -> list[dict]`, `kategorie_dla_jezyka(reguly, lang) -> list[str]`, `zbuduj_ladunek(reguly, lang) -> str`, `wytnij_ladunek(markdown) -> str`, `generuj_markdown(reguly, lang) -> str`. Task 2 i 3 konsumują wyłącznie plik wynikowy, nie te funkcje.
 
 **Dlaczego tablica `ZAKAZY`, a nie pole `opis`:** `opis` w `rules.json` jest pisany pod linter (np. *„triad? (3 paralelne wyrazy ≥3 liter; człony 2-3 małymi literami → mniej FP…)"*), a opisy markerów angielskich są po polsku. Do promptu nie nadaje się ani jedno, ani drugie. Skrypt pilnuje więc **kompletności katalogu**, a ludzkie sformułowanie trzyma w tablicy. Nowa kategoria w miodku = głośny błąd, nie ciche pominięcie.
 
 - [ ] **Step 1: Write the failing test**
 
-Create `tools/test_gen_anty_slop.py`:
+Create `tools/test_gen_anty_slop.py`.
 
-```python
-"""Testy generatora sekcji anty-slop. Uruchom: python3 -m unittest discover -s tools -v"""
-import unittest
+> **Źródłem prawdy jest `tools/test_gen_anty_slop.py` w repo — nie kopia w tym planie.**
+> Plan świadomie nie wkleja pełnego źródła: kopia rozjeżdża się z kodem po cichu i przy
+> następnym wykonaniu odtwarza błędy, które już naprawiliśmy (zdarzyło się raz — patrz
+> Global Constraints). Przeczytaj plik.
 
-from gen_anty_slop import (
-    NieznanaKategoria,
-    generuj_markdown,
-    kategorie_dla_jezyka,
-)
+Test pokrywa, w trzech klasach:
 
-REGULY_TESTOWE = [
-    {"id": "PL-RHET", "lang": "pl", "klasa": "block", "pattern": "x", "opis": "nieważne"},
-    {"id": "PL-SIGN", "lang": "pl", "klasa": "review", "pattern": "y", "opis": "nieważne"},
-    {"id": "PL-SIGN", "lang": "pl", "klasa": "review", "pattern": "z", "opis": "duplikat id"},
-    {"id": "EN-TRIAD", "lang": "en", "klasa": "review", "pattern": "w", "opis": "nieważne"},
-]
-
-
-class TestKategorieDlaJezyka(unittest.TestCase):
-    def test_filtruje_po_jezyku(self):
-        self.assertEqual(kategorie_dla_jezyka(REGULY_TESTOWE, "pl"), ["PL-RHET", "PL-SIGN"])
-        self.assertEqual(kategorie_dla_jezyka(REGULY_TESTOWE, "en"), ["EN-TRIAD"])
-
-    def test_deduplikuje_powtorzone_id(self):
-        # PL-SIGN wystepuje dwukrotnie w rules.json (jeden id grupuje wiele wzorcow)
-        self.assertEqual(kategorie_dla_jezyka(REGULY_TESTOWE, "pl").count("PL-SIGN"), 1)
-
-    def test_lang_both_trafia_do_obu_warstw(self):
-        reguly = [{"id": "X-UNIV", "lang": "both", "klasa": "review", "pattern": "q", "opis": ""}]
-        self.assertEqual(kategorie_dla_jezyka(reguly, "pl"), ["X-UNIV"])
-        self.assertEqual(kategorie_dla_jezyka(reguly, "en"), ["X-UNIV"])
-
-
-class TestGenerujMarkdown(unittest.TestCase):
-    def test_rozdziela_zakazy_twarde_od_przegladu(self):
-        wynik = generuj_markdown(REGULY_TESTOWE, "pl")
-        self.assertIn("## Zakazy twarde", wynik)
-        self.assertIn("## Do świadomej decyzji", wynik)
-        # PL-RHET ma klase block -> sekcja twarda; PL-SIGN review -> sekcja przegladu
-        twarde, przeglad = wynik.split("## Do świadomej decyzji")
-        self.assertIn("To nie X — to Y", twarde)
-        self.assertNotIn("To nie X — to Y", przeglad)
-
-    def test_naglowek_ostrzega_ze_plik_jest_generowany(self):
-        self.assertIn("GENEROWANY", generuj_markdown(REGULY_TESTOWE, "pl"))
-
-    def test_nieznana_kategoria_wywala_sie_glosno(self):
-        reguly = [{"id": "PL-NOWE", "lang": "pl", "klasa": "review", "pattern": "a", "opis": ""}]
-        with self.assertRaises(NieznanaKategoria) as ctx:
-            generuj_markdown(reguly, "pl")
-        self.assertIn("PL-NOWE", str(ctx.exception))
-
-
-if __name__ == "__main__":
-    unittest.main()
-```
+- `TestKategorieDlaJezyka` — filtrowanie po warstwie językowej, deduplikacja powtórzonego id
+  (jeden id grupuje wiele wzorców w `rules.json`), `lang: both` trafiające do obu warstw.
+- `TestGenerujMarkdown` — rozdział zakazów twardych od tych do świadomej decyzji, ostrzeżenie
+  „PLIK GENEROWANY" obecne w pliku ale **nieobecne w ładunku**, głośny `NieznanaKategoria`
+  na nieznanym id.
+- `TestLadunek` — kontrakt ładunku: **ładunek EN nie zawiera ani jednego znaku
+  z `ąćęłńóśźżĄĆĘŁŃÓŚŹŻ`** (to regresja, która wraca), rama EN jest angielska, komunikat
+  o pustej sekcji jest w języku wariantu, ładunek nie wiezie metadanych utrzymaniowych,
+  `wytnij_ladunek` wywala się na pliku bez znaczników.
 
 - [ ] **Step 2: Run test to verify it fails**
 
@@ -124,181 +89,39 @@ Expected: FAIL — `ModuleNotFoundError: No module named 'gen_anty_slop'`
 
 - [ ] **Step 3: Write minimal implementation**
 
-Create `tools/gen_anty_slop.py`:
+Create `tools/gen_anty_slop.py`.
 
-```python
-#!/usr/bin/env python3
-"""Generuje references/anty-slop.md z katalogu markerow sztucznego-miodka.
+> **Źródłem prawdy jest `tools/gen_anty_slop.py` w repo — nie kopia w tym planie.**
+> Ten plan wiózł kiedyś pełne źródło w wersji sprzed `4739a55` (bez polskich diakrytyków)
+> i przy wykonaniu odtworzyłby dokładnie ten błąd, który sam nakazuje naprawić.
+> Zamiast kopii — kontrakt, który plik ma spełniać:
 
-Zrodlo prawdy o tym, KTORE markery istnieja i ktory jest twardy: rules.json miodka.
-Zrodlo ludzkiego sformulowania zakazu: tablica ZAKAZY ponizej — bo pole `opis`
-w rules.json jest pisane pod linter, a opisy markerow angielskich sa po polsku.
+**Struktura generowanego pliku — dwie warstwy, rozdzielone znacznikami:**
 
-Skrypt jest utrzymaniowy: odpala go maintainer po zmianie regul w miodku,
-NIE skill w trakcie rozmowy z uzytkownikiem.
+- **Metadane** (`METADANE`) — komentarz HTML dla maintainera repo: skąd plik, jak przegenerować,
+  dlaczego wstrzykujemy treść zamiast nazwy pluginu (Claude Design nie ładuje pluginów Claude
+  Code). Zostają po polsku w obu wariantach — ich czytelnikiem jest maintainer. **Do promptu
+  nie trafiają.**
+- **Ładunek** — wszystko między `<!-- PROMPT-PAYLOAD-START -->` a `<!-- PROMPT-PAYLOAD-END -->`.
+  Jedyna część wklejana do promptu. **W całości w języku wariantu**: tytuł, nagłówki sekcji,
+  komunikat o pustej sekcji i reguła pierwszeństwa DSa (to treść normatywna dla CD, więc zostaje
+  w ładunku, nie w metadanych). Rama trzymana w `RAMA[lang]`, nie w jednej stałej.
 
-Uzycie:
-    python3 tools/gen_anty_slop.py --miodek ~/dev/sztuczny-miodek-impl
-"""
-import argparse
-import json
-import sys
-from pathlib import Path
+**Interfejs (nazwy zgodne z testem):** `NieznanaKategoria`, `ZAKAZY`, `RAMA`, `METADANE`,
+`ZNACZNIK_START`, `ZNACZNIK_KONIEC`, `wczytaj_reguly`, `kategorie_dla_jezyka`, `zbuduj_ladunek`,
+`wytnij_ladunek`, `generuj_markdown`.
 
+**Pułapki, które już nas kosztowały:**
 
-class NieznanaKategoria(Exception):
-    """rules.json zawiera id, dla ktorego nie ma sformulowania w ZAKAZY."""
-
-
-# id -> (naglowek, zakaz w formie zrozumialej dla Claude Design)
-ZAKAZY = {
-    "PL-SIGN": (
-        "Puste otwarcia",
-        "Nie zapowiadaj, że zaraz powiesz coś ważnego — powiedz to. Żadnych „warto podkreślić”, "
-        "„warto zauważyć”, „należy pamiętać” na początku slajdu ani punktu.",
-    ),
-    "PL-CLICHE": (
-        "Klisze",
-        "Żadnych fraz-wypełniaczy w rodzaju „odgrywa kluczową rolę”, „stanowi fundament”, "
-        "„nie sposób przecenić”. Jeśli coś jest ważne, pokaż czym, zamiast to deklarować.",
-    ),
-    "PL-RHET": (
-        "Antyteza redefinicyjna",
-        "Nigdy nie buduj zdania wzorem „To nie X — to Y”. To najsilniejszy marker maszynowego "
-        "tekstu. Powiedz wprost, czym rzecz jest.",
-    ),
-    "PL-ANTI": (
-        "Antyteza",
-        "Unikaj konstrukcji „X, a nie Y” jako ozdobnika. Dopuszczalna wyłącznie tam, gdzie "
-        "przeciwstawienie niesie realną treść.",
-    ),
-    "PL-HEDGE": (
-        "Piętrowe asekuracje",
-        "Jeden hedge maksymalnie. Nigdy „mogłoby potencjalnie”, „wydaje się być może”. "
-        "Na decku asekuracja czyta się jak brak zdania.",
-    ),
-    "PL-TYPO": (
-        "Nagłówki-klisze",
-        "Żadnych nagłówków „Kluczowe wnioski”, „Podsumowanie”, „Wprowadzenie”. Nagłówek slajdu "
-        "ma nieść tezę tego slajdu.",
-    ),
-    "EN-ANTI": (
-        "Antithesis",
-        "Never write „not only… but also” or „it's not X, it's Y” as an ornament.",
-    ),
-    "EN-TRIAD": (
-        "Triads",
-        "Do not group three parallel adjectives or nouns for rhythm („fast, simple, powerful”). "
-        "Name the one that matters.",
-    ),
-    "EN-PARA": (
-        "Parallelism",
-        "Avoid mirrored constructions built for cadence rather than meaning "
-        "(„self-serve and self-heal”).",
-    ),
-    "EN-CLICHE": (
-        "Clichés and signposts",
-        "No „it's worth noting”, „at the end of the day”, „in today's fast-paced world”.",
-    ),
-    "EN-HEDGE": (
-        "Hedging",
-        "One hedge at most. Never „may potentially”, „could possibly”.",
-    ),
-    "EN-SUPER": (
-        "Empty superlatives",
-        "No „seamless”, „robust”, „cutting-edge”, „game-changing” without a number behind them.",
-    ),
-    "EN-CONCL": (
-        "Closing signposts",
-        "Do not open the closing slide with „In conclusion” or „To sum up”.",
-    ),
-}
-
-NAGLOWEK = """<!-- PLIK GENEROWANY — nie edytuj recznie.
-     Zrodlo: rules.json w https://github.com/hretheum/sztuczny-miodek
-     Regeneracja: python3 tools/gen_anty_slop.py --miodek <sciezka-do-klona>
--->
-
-# Anty-slop — sekcja wstrzykiwana do promptu
-
-Ponizsza tresc trafia do promptu dla Claude Design **jako tresc**, nie jako odwolanie do pluginu.
-Claude Design nie laduje pluginow Claude Code, wiec nazwa `sztuczny-miodek` nic by mu nie powiedziala.
-
-Przy konflikcie z regulami copy Efigence DS **wygrywa DS** — to jego marka.
-"""
-
-
-def wczytaj_reguly(sciezka: Path) -> list:
-    """Czyta rules.json. Wylacznie biblioteka standardowa (ZERO-DEP)."""
-    with open(sciezka, encoding="utf-8") as f:
-        return json.load(f)
-
-
-def kategorie_dla_jezyka(reguly: list, lang: str) -> list:
-    """Zwraca posortowane, zdeduplikowane id dla warstwy jezykowej.
-
-    Duplikaty id sa w rules.json normalne — jeden id grupuje wiele wzorcow.
-    """
-    return sorted({r["id"] for r in reguly if r["lang"] in (lang, "both")})
-
-
-def _klasa_kategorii(reguly: list, kategoria: str) -> str:
-    """block, jesli ktorykolwiek wpis tej kategorii jest blokujacy."""
-    klasy = {r["klasa"] for r in reguly if r["id"] == kategoria}
-    return "block" if "block" in klasy else "review"
-
-
-def generuj_markdown(reguly: list, lang: str) -> str:
-    kategorie = kategorie_dla_jezyka(reguly, lang)
-
-    nieznane = [k for k in kategorie if k not in ZAKAZY]
-    if nieznane:
-        raise NieznanaKategoria(
-            f"rules.json zawiera kategorie bez sformulowania w ZAKAZY: {', '.join(nieznane)}. "
-            f"Dopisz zdanie do tablicy ZAKAZY w tools/gen_anty_slop.py."
-        )
-
-    twarde, przeglad = [], []
-    for k in kategorie:
-        naglowek, tresc = ZAKAZY[k]
-        wpis = f"### {naglowek}\n\n{tresc}\n"
-        (twarde if _klasa_kategorii(reguly, k) == "block" else przeglad).append(wpis)
-
-    czesci = [NAGLOWEK, "\n## Zakazy twarde\n"]
-    czesci.append("\n".join(twarde) if twarde else "_(brak w tej warstwie jezykowej)_\n")
-    czesci.append("\n## Do świadomej decyzji\n")
-    czesci.append("\n".join(przeglad) if przeglad else "_(brak w tej warstwie jezykowej)_\n")
-    return "\n".join(czesci)
-
-
-def main() -> int:
-    p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--miodek", required=True, type=Path, help="sciezka do klona repo sztuczny-miodek")
-    p.add_argument("--repo", type=Path, default=Path(__file__).resolve().parent.parent)
-    args = p.parse_args()
-
-    rules = args.miodek / "src" / "miodek" / "data" / "rules.json"
-    if not rules.is_file():
-        print(f"BLAD: nie ma {rules}", file=sys.stderr)
-        return 1
-
-    reguly = wczytaj_reguly(rules)
-    for lang, plugin in (("pl", "deck-prompt"), ("en", "deck-prompt-en")):
-        cel = args.repo / "plugins" / plugin / "skills" / plugin / "references" / "anty-slop.md"
-        cel.parent.mkdir(parents=True, exist_ok=True)
-        cel.write_text(generuj_markdown(reguly, lang), encoding="utf-8")
-        print(f"zapisano {cel} ({len(kategorie_dla_jezyka(reguly, lang))} kategorii)")
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
-```
+- Metadane wymieniają znaczniki **z nazwy** (`PROMPT-PAYLOAD-START`), nie dosłownie —
+  inaczej znacznik występuje w pliku dwa razy i `wytnij_ladunek` nie tnie jednoznacznie.
+- Angielskie zakazy w `ZAKAZY` cytują przykłady angielskimi cudzysłowami (`" "`), nigdy
+  polskimi (`„ ”`).
 
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `cd /Users/eorlowski/dev/hermes/fable-prompt-repo && python3 -m unittest discover -s tools -v`
-Expected: PASS — 6 testów OK
+Expected: PASS — 11 testów OK
 
 - [ ] **Step 5: Wygeneruj oba pliki na prawdziwym rules.json**
 
@@ -315,7 +138,7 @@ Jeśli poleci `NieznanaKategoria` — miodek dorobił kategorię. Dopisz zdanie 
 
 Sprawdzone na prawdziwym `rules.json` (2026-07-17): **jedyną regułą klasy `block` w całym katalogu
 jest `PL-RHET`.** Wszystkie kategorie EN mają klasę `review`. Skutek: `anty-slop.md` wariantu
-angielskiego wyjdzie z sekcją „Zakazy twarde" pustą (`_(brak w tej warstwie językowej)_`), czyli EN
+angielskiego wyjdzie z sekcją „Hard bans" pustą (`_(none in this language layer)_`), czyli EN
 jest miękkie dokładnie tam, gdzie PL blokuje.
 
 To nie jest awaria skryptu — to wierne odbicie katalogu miodka. Do rozstrzygnięcia:
@@ -341,14 +164,18 @@ Reguły copy Efigence DS: sentence case, ton „direct, calm, expert", jedna akc
 cd /Users/eorlowski/dev/hermes/fable-prompt-repo
 git add tools/ plugins/deck-prompt/skills/deck-prompt/references/anty-slop.md \
         plugins/deck-prompt-en/skills/deck-prompt-en/references/anty-slop.md
-git commit -m "feat: generator sekcji anty-slop z katalogu markerow miodka
+git commit -m "feat: generator sekcji anty-slop z katalogu markerów miodka
 
-Skrypt pilnuje kompletnosci katalogu (rules.json = zrodlo prawdy o tym,
-ktore markery istnieja i ktory jest twardy), a ludzkie sformulowanie zakazu
+Skrypt pilnuje kompletności katalogu (rules.json = źródło prawdy o tym,
+które markery istnieją i który jest twardy), a ludzkie sformułowanie zakazu
 trzyma w tablicy ZAKAZY — bo pole opis w rules.json jest pisane pod linter,
-a opisy markerow angielskich sa po polsku.
+a opisy markerów angielskich są po polsku.
 
-Nowa kategoria w miodku = glosny blad NieznanaKategoria, nie ciche pominiecie."
+Generowany plik dzieli się na metadane utrzymaniowe i ładunek odcięty
+znacznikami PROMPT-PAYLOAD-*. Do promptu wjeżdża wyłącznie ładunek,
+w całości w języku wariantu.
+
+Nowa kategoria w miodku = głośny błąd NieznanaKategoria, nie ciche pominięcie."
 ```
 
 ---
@@ -954,7 +781,7 @@ git push origin feat/deck-prompt
 | Struktura katalogów obu pluginów | 2, 3 |
 | `gen_anty_slop.py` na poziomie repo, ścieżka argumentem | 1 |
 | `anty-slop.md` jako artefakt generowany, nie ręczny | 1 (Step 5-7) |
-| Uzgodnienie anty-slopu z głosem marki, przy konflikcie wygrywa DS | 1 (Step 6) + `NAGLOWEK` w skrypcie |
+| Uzgodnienie anty-slopu z głosem marki, przy konflikcie wygrywa DS | 1 (Step 6) + `RAMA[lang]["pierwszenstwo"]` w skrypcie (reguła siedzi w ładunku, w języku wariantu) |
 | Etap -1 (zapis do pliku) | 2 (SKILL.md) |
 | Brak Etapu 0, brak `DesignSync` | 2 (SKILL.md, sekcja „Nie sprawdzaj dostępu") + Global Constraints |
 | Etap 1 — walidacja skali wg kryterium „czy myślenie istnieje" | 2 (SKILL.md) + 5 (Step 2) |
@@ -969,4 +796,4 @@ Luk nie znalazłem.
 
 **Placeholdery:** brak `TBD` i `TODO`. Task 3 nie powtarza treści plików z Taska 2 — to świadomy wyjątek od reguły „repeat the code": pliki są tłumaczeniem 1:1 istniejącego artefaktu, a wklejenie ich drugi raz w wersji angielskiej dałoby ~400 linii, które i tak trzeba porównać z oryginałem. Zamiast tego Task 3 wskazuje pliki źródłowe, wylicza nazwy pól po angielsku i wypisuje trzy zdania-kotwice, których nie wolno przetłumaczyć maszynowo.
 
-**Spójność typów:** `wczytaj_reguly`, `kategorie_dla_jezyka`, `generuj_markdown`, `NieznanaKategoria`, `ZAKAZY` — nazwy zgodne między testem (Task 1 Step 1) a implementacją (Step 3). Liczby kategorii w Step 5 (6 PL / 7 EN) policzone z prawdziwego `rules.json`.
+**Spójność typów:** `wczytaj_reguly`, `kategorie_dla_jezyka`, `zbuduj_ladunek`, `wytnij_ladunek`, `generuj_markdown`, `NieznanaKategoria`, `ZAKAZY`, `RAMA` — nazwy zgodne między testem (Task 1 Step 1) a implementacją (Step 3). Od czasu poprawek z recenzji końcowej Task 1 nie wkleja źródeł, tylko wskazuje pliki i opisuje kontrakt — więc rozjazd nazw plan↔kod przestał być możliwy. Liczby kategorii w Step 5 (6 PL / 7 EN) policzone z prawdziwego `rules.json`.
