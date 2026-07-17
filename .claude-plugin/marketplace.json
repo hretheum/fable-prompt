@@ -1,7 +1,7 @@
 {
   "name": "hretheum-skills",
   "owner": { "name": "Eryk Orłowski" },
-  "description": "Skille do spec-driven developmentu i pracy z Claude Fable 5.",
+  "description": "Skille do spec-driven developmentu, pracy z Claude Fable 5 i budowania promptów pod Claude Design.",
   "plugins": [
     {
       "name": "fable-prompt",
@@ -12,6 +12,16 @@
       "name": "fable-prompt-en",
       "source": "./plugins/fable-prompt-en",
       "description": "Interactively builds a validated prompt in Whole-Job Handoff format for Claude Fable 5 — asks questions across the 9 spec fields, explains the consequences of each choice, audits the result, and saves a clean .md file. (English variant.)"
+    },
+    {
+      "name": "deck-prompt",
+      "source": "./plugins/deck-prompt",
+      "description": "Interaktywnie buduje prompt dla Claude Design na deck osadzony w firmowym design systemie — pyta o cel, grupę docelową i tezę, waliduje czy koncept w ogóle istnieje (jeśli nie, odsyła do Fable), wstrzykuje reguły anty-slop i zapisuje czysty plik .md. (Wersja polska.)"
+    },
+    {
+      "name": "deck-prompt-en",
+      "source": "./plugins/deck-prompt-en",
+      "description": "Interactively builds a prompt for Claude Design to generate a deck grounded in your design system — asks about goal, audience and thesis, validates whether the concept exists at all (and hands off to Fable if it doesn't), injects anti-slop rules, and saves a clean .md file. (English variant.)"
     }
   ]
 }
