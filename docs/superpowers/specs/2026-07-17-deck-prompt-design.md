@@ -46,9 +46,12 @@ wystarczająco pojemna.
 
 ## Źródło markerów anty-slop
 
-Markery pochodzą z `sztuczny-miodek` (fork: `hretheum/sztuczny-miodek`, lokalnie
-`/Users/eorlowski/dev/sztuczny-miodek-impl`), z pliku `src/miodek/data/rules.json` — 48 reguł, każda
-z polami `id`, `lang` (`pl` / `en` / `both`), `klasa` (`block` / `review`), `pattern`, `opis`.
+Markery pochodzą z `sztuczny-miodek` ([upstream](https://github.com/researchanddeploy/sztuczny-miodek),
+[fork](https://github.com/hretheum/sztuczny-miodek)), z pliku `src/miodek/data/rules.json` — 48 reguł,
+każda z polami `id`, `lang` (`pl` / `en` / `both`), `klasa` (`block` / `review`), `pattern`, `opis`.
+
+`gen_anty_slop.py` przyjmuje ścieżkę do klona miodka argumentem — nie zakłada żadnego konkretnego
+miejsca na dysku.
 
 Miodek zostaje tam, gdzie jest. Nie przenosimy go do tego marketplace'u i nie robimy z niego
 zależności runtime'owej, z jednego powodu: **miodek jest pluginem Claude Code, a prompt jedzie do
