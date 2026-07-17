@@ -1,0 +1,7 @@
+{
+  "name": "deck-prompt",
+  "version": "0.1.0",
+  "description": "Interaktywnie buduje prompt dla Claude Design na deck osadzony w design systemie — zadaje pytania po polach specyfikacji, waliduje skalę zadania, wstrzykuje reguły anty-slop i zapisuje czysty plik .md.",
+  "author": { "name": "Eryk Orłowski" },
+  "skills": ["./skills/deck-prompt"]
+}
