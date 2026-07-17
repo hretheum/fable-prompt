@@ -21,7 +21,7 @@ class TestKategorieDlaJezyka(unittest.TestCase):
         self.assertEqual(kategorie_dla_jezyka(REGULY_TESTOWE, "en"), ["EN-TRIAD"])
 
     def test_deduplikuje_powtorzone_id(self):
-        # PL-SIGN wystepuje dwukrotnie w rules.json (jeden id grupuje wiele wzorcow)
+        # PL-SIGN występuje dwukrotnie w rules.json (jeden id grupuje wiele wzorców)
         self.assertEqual(kategorie_dla_jezyka(REGULY_TESTOWE, "pl").count("PL-SIGN"), 1)
 
     def test_lang_both_trafia_do_obu_warstw(self):
@@ -35,7 +35,7 @@ class TestGenerujMarkdown(unittest.TestCase):
         wynik = generuj_markdown(REGULY_TESTOWE, "pl")
         self.assertIn("## Zakazy twarde", wynik)
         self.assertIn("## Do świadomej decyzji", wynik)
-        # PL-RHET ma klase block -> sekcja twarda; PL-SIGN review -> sekcja przegladu
+        # PL-RHET ma klasę block -> sekcja twarda; PL-SIGN review -> sekcja przeglądu
         twarde, przeglad = wynik.split("## Do świadomej decyzji")
         self.assertIn("To nie X — to Y", twarde)
         self.assertNotIn("To nie X — to Y", przeglad)

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Generuje references/anty-slop.md z katalogu markerow sztucznego-miodka.
+"""Generuje references/anty-slop.md z katalogu markerów sztucznego-miodka.
 
-Zrodlo prawdy o tym, KTORE markery istnieja i ktory jest twardy: rules.json miodka.
-Zrodlo ludzkiego sformulowania zakazu: tablica ZAKAZY ponizej — bo pole `opis`
-w rules.json jest pisane pod linter, a opisy markerow angielskich sa po polsku.
+Źródło prawdy o tym, KTÓRE markery istnieją i który jest twardy: rules.json miodka.
+Źródło ludzkiego sformułowania zakazu: tablica ZAKAZY poniżej — bo pole `opis`
+w rules.json jest pisane pod linter, a opisy markerów angielskich są po polsku.
 
-Skrypt jest utrzymaniowy: odpala go maintainer po zmianie regul w miodku,
-NIE skill w trakcie rozmowy z uzytkownikiem.
+Skrypt jest utrzymaniowy: odpala go maintainer po zmianie reguł w miodku,
+NIE skill w trakcie rozmowy z użytkownikiem.
 
-Uzycie:
+Użycie:
     python3 tools/gen_anty_slop.py --miodek ~/dev/sztuczny-miodek-impl
 """
 import argparse
@@ -18,10 +18,10 @@ from pathlib import Path
 
 
 class NieznanaKategoria(Exception):
-    """rules.json zawiera id, dla ktorego nie ma sformulowania w ZAKAZY."""
+    """rules.json zawiera id, dla którego nie ma sformułowania w ZAKAZY."""
 
 
-# id -> (naglowek, zakaz w formie zrozumialej dla Claude Design)
+# id -> (nagłówek, zakaz w formie zrozumiałej dla Claude Design)
 ZAKAZY = {
     "PL-SIGN": (
         "Puste otwarcia",
@@ -85,36 +85,36 @@ ZAKAZY = {
     ),
 }
 
-NAGLOWEK = """<!-- PLIK GENEROWANY — nie edytuj recznie.
-     Zrodlo: rules.json w https://github.com/hretheum/sztuczny-miodek
-     Regeneracja: python3 tools/gen_anty_slop.py --miodek <sciezka-do-klona>
+NAGLOWEK = """<!-- PLIK GENEROWANY — nie edytuj ręcznie.
+     Źródło: rules.json w https://github.com/hretheum/sztuczny-miodek
+     Regeneracja: python3 tools/gen_anty_slop.py --miodek <ścieżka-do-klona>
 -->
 
 # Anty-slop — sekcja wstrzykiwana do promptu
 
-Ponizsza tresc trafia do promptu dla Claude Design **jako tresc**, nie jako odwolanie do pluginu.
-Claude Design nie laduje pluginow Claude Code, wiec nazwa `sztuczny-miodek` nic by mu nie powiedziala.
+Poniższa treść trafia do promptu dla Claude Design **jako treść**, nie jako odwołanie do pluginu.
+Claude Design nie ładuje pluginów Claude Code, więc nazwa `sztuczny-miodek` nic by mu nie powiedziała.
 
-Przy konflikcie z regulami copy Efigence DS **wygrywa DS** — to jego marka.
+Przy konflikcie z regułami copy Efigence DS **wygrywa DS** — to jego marka.
 """
 
 
 def wczytaj_reguly(sciezka: Path) -> list:
-    """Czyta rules.json. Wylacznie biblioteka standardowa (ZERO-DEP)."""
+    """Czyta rules.json. Wyłącznie biblioteka standardowa (ZERO-DEP)."""
     with open(sciezka, encoding="utf-8") as f:
         return json.load(f)
 
 
 def kategorie_dla_jezyka(reguly: list, lang: str) -> list:
-    """Zwraca posortowane, zdeduplikowane id dla warstwy jezykowej.
+    """Zwraca posortowane, zdeduplikowane id dla warstwy językowej.
 
-    Duplikaty id sa w rules.json normalne — jeden id grupuje wiele wzorcow.
+    Duplikaty id są w rules.json normalne — jeden id grupuje wiele wzorców.
     """
     return sorted({r["id"] for r in reguly if r["lang"] in (lang, "both")})
 
 
 def _klasa_kategorii(reguly: list, kategoria: str) -> str:
-    """block, jesli ktorykolwiek wpis tej kategorii jest blokujacy."""
+    """block, jeśli którykolwiek wpis tej kategorii jest blokujący."""
     klasy = {r["klasa"] for r in reguly if r["id"] == kategoria}
     return "block" if "block" in klasy else "review"
 
@@ -125,7 +125,7 @@ def generuj_markdown(reguly: list, lang: str) -> str:
     nieznane = [k for k in kategorie if k not in ZAKAZY]
     if nieznane:
         raise NieznanaKategoria(
-            f"rules.json zawiera kategorie bez sformulowania w ZAKAZY: {', '.join(nieznane)}. "
+            f"rules.json zawiera kategorie bez sformułowania w ZAKAZY: {', '.join(nieznane)}. "
             f"Dopisz zdanie do tablicy ZAKAZY w tools/gen_anty_slop.py."
         )
 
@@ -136,21 +136,21 @@ def generuj_markdown(reguly: list, lang: str) -> str:
         (twarde if _klasa_kategorii(reguly, k) == "block" else przeglad).append(wpis)
 
     czesci = [NAGLOWEK, "\n## Zakazy twarde\n"]
-    czesci.append("\n".join(twarde) if twarde else "_(brak w tej warstwie jezykowej)_\n")
+    czesci.append("\n".join(twarde) if twarde else "_(brak w tej warstwie językowej)_\n")
     czesci.append("\n## Do świadomej decyzji\n")
-    czesci.append("\n".join(przeglad) if przeglad else "_(brak w tej warstwie jezykowej)_\n")
+    czesci.append("\n".join(przeglad) if przeglad else "_(brak w tej warstwie językowej)_\n")
     return "\n".join(czesci)
 
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--miodek", required=True, type=Path, help="sciezka do klona repo sztuczny-miodek")
+    p.add_argument("--miodek", required=True, type=Path, help="ścieżka do klona repo sztuczny-miodek")
     p.add_argument("--repo", type=Path, default=Path(__file__).resolve().parent.parent)
     args = p.parse_args()
 
     rules = args.miodek / "src" / "miodek" / "data" / "rules.json"
     if not rules.is_file():
-        print(f"BLAD: nie ma {rules}", file=sys.stderr)
+        print(f"BŁĄD: nie ma {rules}", file=sys.stderr)
         return 1
 
     reguly = wczytaj_reguly(rules)

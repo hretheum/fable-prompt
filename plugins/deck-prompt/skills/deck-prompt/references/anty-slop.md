@@ -1,14 +1,14 @@
-<!-- PLIK GENEROWANY — nie edytuj recznie.
-     Zrodlo: rules.json w https://github.com/hretheum/sztuczny-miodek
-     Regeneracja: python3 tools/gen_anty_slop.py --miodek <sciezka-do-klona>
+<!-- PLIK GENEROWANY — nie edytuj ręcznie.
+     Źródło: rules.json w https://github.com/hretheum/sztuczny-miodek
+     Regeneracja: python3 tools/gen_anty_slop.py --miodek <ścieżka-do-klona>
 -->
 
 # Anty-slop — sekcja wstrzykiwana do promptu
 
-Ponizsza tresc trafia do promptu dla Claude Design **jako tresc**, nie jako odwolanie do pluginu.
-Claude Design nie laduje pluginow Claude Code, wiec nazwa `sztuczny-miodek` nic by mu nie powiedziala.
+Poniższa treść trafia do promptu dla Claude Design **jako treść**, nie jako odwołanie do pluginu.
+Claude Design nie ładuje pluginów Claude Code, więc nazwa `sztuczny-miodek` nic by mu nie powiedziała.
 
-Przy konflikcie z regulami copy Efigence DS **wygrywa DS** — to jego marka.
+Przy konflikcie z regułami copy Efigence DS **wygrywa DS** — to jego marka.
 
 
 ## Zakazy twarde
