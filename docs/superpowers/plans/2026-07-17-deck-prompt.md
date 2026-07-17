@@ -783,6 +783,10 @@ Przetłumacz na angielski, zachowując strukturę 1:1 z Taskiem 2:
 
 **Uwaga na TRYB MARKI:** tryby (Corporate / Product / Innovation) są nazwami z DSa i **zostają po angielsku w obu wariantach** — nie tłumacz ich na polski w wariancie PL ani nie zmieniaj w EN.
 
+**Ścieżka Fable w wariancie EN wskazuje `fable-prompt-en`, nie `fable-prompt`.** Oba pluginy istnieją.
+Anglojęzyczny użytkownik odesłany do wariantu polskiego dostałby rozmowę po polsku. Dotyczy obu
+wystąpień w `SKILL.md`: porównania na wstępie i sekcji „The Fable path".
+
 - [ ] **Step 2: Sprawdź spójność wariantów**
 
 Run:
