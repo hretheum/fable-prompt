@@ -1,0 +1,7 @@
+{
+  "name": "deck-prompt-en",
+  "version": "0.1.0",
+  "description": "Interactively builds a prompt for Claude Design to generate a deck embedded in a design system — asks questions field by field, validates the scale of the task, injects anti-slop rules, and saves a clean .md file.",
+  "author": { "name": "Eryk Orłowski" },
+  "skills": ["./skills/deck-prompt-en"]
+}
