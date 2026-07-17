@@ -12,7 +12,11 @@ Spec: [`docs/superpowers/specs/2026-07-17-deck-prompt-design.md`](../specs/2026-
 
 ## Global Constraints
 
-- **Język artefaktów PL:** pełne polskie znaki diakrytyczne (ą ć ę ł ń ó ś ź ż). Nigdy ASCII.
+- **Polskie diakrytyki wszędzie:** ą ć ę ł ń ó ś ź ż. Nigdy ASCII. Dotyczy **każdego** polskiego
+  tekstu, jaki powstaje: treści skilli, docstringów i komentarzy w kodzie, stringów wypisywanych
+  przez skrypty, treści commitów. Nie tylko tego, co widzi użytkownik końcowy. (Ta reguła została
+  raz złamana w Tasku 1 — `NAGLOWEK` w `gen_anty_slop.py` trafiał bez ogonków wprost do
+  generowanego pliku. Poprawione w `4739a55`.)
 - **ZERO-DEP:** `gen_anty_slop.py` importuje wyłącznie bibliotekę standardową Pythona. Żadnego pip.
 - **Skill nie woła `DesignSync`** ani żadnego mechanizmu czytającego Claude Design. Użytkownicy docelowi siedzą w Claude Desktop, gdzie tych narzędzi nie ma.
 - **Prompt nie enumeruje komponentów DSa.** Kryterium na to, co jest polem: *prompt nie opisuje DSa, tylko podejmuje decyzje, których DS nie podejmie za nas.*
@@ -735,13 +739,13 @@ cd /Users/eorlowski/dev/hermes/fable-prompt-repo
 git add plugins/deck-prompt/
 git commit -m "feat: plugin deck-prompt (PL)
 
-Skill prowadzi przez 10 pol specyfikacji promptu dla Claude Design.
-Bramy: zapis do pliku (Etap -1) i walidacja skali (Etap 1) — jesli
-konceptu decka nie ma, skill wola fable-prompt zamiast budowac prompt
+Skill prowadzi przez 10 pól specyfikacji promptu dla Claude Design.
+Bramy: zapis do pliku (Etap -1) i walidacja skali (Etap 1) — jeśli
+konceptu decka nie ma, skill woła fable-prompt zamiast budować prompt
 na pustce.
 
-Prompt nie enumeruje komponentow DSa: CD ma je przed soba wraz z opisem
-przeznaczenia. Jedyne pole o wygladzie to TRYB MARKI, bo to decyzja
+Prompt nie enumeruje komponentów DSa: CD ma je przed sobą wraz z opisem
+przeznaczenia. Jedyne pole o wyglądzie to TRYB MARKI, bo to decyzja
 o pozycjonowaniu, nie wiedza o DSie."
 ```
 
@@ -798,8 +802,8 @@ cd /Users/eorlowski/dev/hermes/fable-prompt-repo
 git add plugins/deck-prompt-en/
 git commit -m "feat: plugin deck-prompt-en (wariant angielski)
 
-Lustro deck-prompt. Nazwy trybow marki (Corporate/Product/Innovation)
-zostaja po angielsku w obu wariantach — to nazwy z DSa, nie tekst."
+Lustro deck-prompt. Nazwy trybów marki (Corporate/Product/Innovation)
+zostają po angielsku w obu wariantach — to nazwy z DSa, nie tekst."
 ```
 
 ---
@@ -931,7 +935,7 @@ Wnioski z kroków 1-3 nanieś na `SKILL.md` i `references/`. Jeśli któraś zmi
 ```bash
 cd /Users/eorlowski/dev/hermes/fable-prompt-repo
 git add -A plugins/ docs/
-git commit -m "fix: poprawki z proby na sucho (deck-prompt)"
+git commit -m "fix: poprawki z próby na sucho (deck-prompt)"
 git push origin feat/deck-prompt
 ```
 
