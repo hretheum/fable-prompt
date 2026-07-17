@@ -39,11 +39,23 @@ the content.
 
 Question: "In one sentence — what does this deck claim?"
 
+This question was already asked in Stage 1 — here you record the answer from there, verbatim. You
+ask a second time only if something has since undermined it.
+
 Consequence: the thesis is the spine of the narrative. Without it, every slide will be its own
 island.
 
-**If the user can't write that sentence — go back to scale validation (Stage 1).** This isn't a
-wording block; it's a signal that the concept doesn't exist yet and the work belongs to Fable.
+**Don't write that sentence for the user.** No "do you mean that…", no options to pick from — not
+even when they ask, not even when you can see a ready formulation in what they're saying. The user
+will agree to your sentence because it sounds better than theirs, and from that moment the deck
+stands on a thesis nobody checked.
+
+**If the user can't write that sentence — the Stage 1 gate closes and you take the Fable path.**
+This isn't a wording block; it's a signal that the concept doesn't exist yet.
+
+You return to Stage 1 with a verdict, not to ask those questions again and hear the same answers.
+Stage 1 let this conversation through on the strength of a sentence that has just fallen apart —
+that's new information, not a tie to be replayed a second time.
 
 ## 5. NARRATIVE
 

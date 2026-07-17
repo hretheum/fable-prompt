@@ -51,7 +51,11 @@ this skill are usually sitting in Claude Desktop.
   to avoid").
 - Once an answer is settled — **save it to the working file immediately** and show what you saved.
 - If the user has no opinion — propose a sensible default with justification, but don't decide
-  without confirmation.
+  without confirmation. **Exception: THESIS, GOAL and SOURCES.** You don't formulate these three
+  for the user and you don't offer them options to pick from, even when asked. These aren't choices
+  from a list — they're the thinking the deck is meant to package. A missing answer here is
+  information, not a gap to fill. A thesis you supply comes back to you as "oh yes, that's good"
+  and passes the Stage 1 gate as someone else's.
 - Ask questions with a limited set of answers as a numbered list in text (this works everywhere — in
   the terminal, chat, or a channel with no buttons).
 
@@ -65,11 +69,32 @@ thought through is still work for CD. The criterion is:
 
 > **Does the thinking behind this deck already exist?**
 
-- **The concept exists** (the decision is made, the data is there, the thesis can be stated in one
-  sentence) → CD. The deck is packaging. Proceed.
-- **The concept doesn't exist** (the thesis still has to emerge from synthesizing multiple sources,
-  with contradictions to resolve) → **Fable.** Given a brief like that, CD will guess the thesis
-  from training-data memory and generate a good-looking, empty deck.
+The answer to "what, for whom, why" doesn't settle this — people answer that question with a topic,
+and everyone has a topic. So ask three questions directly, one at a time, before you assess
+anything:
+
+1. "In one sentence — what does this deck **claim**?" (not: what it's about)
+2. "How do you know it's true? What data do you have, in which file?"
+3. "Who does what differently after this deck?"
+
+Don't hint at answers and don't offer options to choose from. You're asking whether the thinking
+exists; supplying your own proposal voids the question, because the user will agree to yours.
+
+- **The concept exists** — all three get something concrete: an assertive sentence, a named source,
+  a named decision. → CD. The deck is packaging. Proceed.
+- **The concept doesn't exist** — any of the three comes back without substance: the thesis still
+  has to emerge from synthesizing multiple sources, the data is "somewhere," there's no decision. →
+  **Fable.** Given a brief like that, CD will guess the thesis from training-data memory and
+  generate a good-looking, empty deck.
+
+There is no third state. If you still don't know which category you're in after these questions,
+you're in the second one. Collecting fields is not a way to find out: the fields in Stages 2-11
+assume a thesis rather than producing one, so the conversation will reach the end regardless — just
+with a thesis guessed along the way.
+
+Keep the answers; don't ask these questions twice. The sentence from question 1 is the content of
+the THESIS field (Stage 5) — you record it verbatim. Answers 2 and 3 are the seed of SOURCES and
+GOAL: in Stages 2 and 7 you ask for the missing detail rather than starting from scratch.
 
 Remember your assessment — you'll return to it in Stage 12.
 
@@ -91,7 +116,8 @@ memory. In brief, in this order, one question at a time:
 2. **GOAL** — what decision should be made. Push back on "inform."
 3. **AUDIENCE** — who's in the room, what they know, who will push back.
 4. **FORMAT** — spoken or read without the author present. Determines content density.
-5. **THESIS** — one sentence. If it can't be written → go back to Stage 1.
+5. **THESIS** — the sentence from Stage 1, recorded verbatim. If it falls apart now → the Stage 1
+   gate closes: the Fable path.
 6. **NARRATIVE** — the path from thesis to decision. The role of each slide in plain language, not
    an archetype name.
 7. **SOURCES** — specific files and data. Push back on generalities: vague sources make Claude

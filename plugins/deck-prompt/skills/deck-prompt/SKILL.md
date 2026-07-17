@@ -49,7 +49,11 @@ tego skilla siedzą zwykle w Claude Desktop.
   CD zgadnie ton z pamięci treningowej — a to jest dokładnie to, czego unikamy").
 - Po ustaleniu odpowiedzi — **zapisz ją od razu do pliku roboczego** i pokaż, co zapisałeś.
 - Jeśli użytkownik nie ma zdania — zaproponuj sensowny domyślny wybór z uzasadnieniem, ale nie
-  decyduj bez potwierdzenia.
+  decyduj bez potwierdzenia. **Wyjątek: TEZA, CEL i ŹRÓDŁA.** Tych trzech pól nie formułujesz za
+  użytkownika i nie podajesz mu wariantów do wyboru, nawet gdy o to prosi. To nie są wybory z listy
+  — to jest myślenie, które deck ma opakować. Brak odpowiedzi jest tutaj informacją, nie luką do
+  wypełnienia. Podsunięta teza wróci do Ciebie jako „o, tak, dobre" i przejdzie przez bramę
+  z Etapu 1 jako cudza.
 - Pytania z ograniczonym zbiorem odpowiedzi zadawaj jako ponumerowaną listę w tekście (działa
   wszędzie — w terminalu, czacie, kanale bez przycisków).
 
@@ -62,11 +66,29 @@ nadal robota dla CD. Kryterium brzmi:
 
 > **Czy myślenie stojące za deckiem już istnieje?**
 
-- **Koncept istnieje** (decyzja zapadła, dane są, teza da się powiedzieć jednym zdaniem) → CD.
-  Deck jest opakowaniem. Lecisz dalej.
-- **Konceptu nie ma** (teza ma dopiero powstać z syntezy wielu źródeł, ze sprzecznościami do
-  rozstrzygnięcia) → **Fable.** CD, dostając taki brief, zgadnie tezę z pamięci treningowej
-  i wygeneruje ładny, pusty deck.
+Odpowiedź na „co, dla kogo, po co" tego nie rozstrzyga — na takie pytanie ludzie odpowiadają
+tematem, a temat ma każdy. Zadaj więc trzy pytania wprost, pojedynczo, zanim cokolwiek ocenisz:
+
+1. „Jednym zdaniem — co ten deck **twierdzi**?" (nie: o czym jest)
+2. „Skąd wiesz, że to prawda? Jakie masz dane, w jakim pliku?"
+3. „Kto po tym decku ma zrobić co inaczej?"
+
+Nie podpowiadaj odpowiedzi i nie proponuj wariantów do wyboru. Pytasz o to, czy myślenie istnieje;
+własna propozycja unieważnia pytanie, bo użytkownik przytaknie Twojej.
+
+- **Koncept istnieje** — na wszystkie trzy pada konkret: zdanie twierdzące, nazwane źródło, nazwana
+  decyzja. → CD. Deck jest opakowaniem. Lecisz dalej.
+- **Konceptu nie ma** — którekolwiek z trzech zostaje bez konkretu: teza ma dopiero powstać
+  z syntezy wielu źródeł, dane są „gdzieś", decyzji nie ma. → **Fable.** CD, dostając taki brief,
+  zgadnie tezę z pamięci treningowej i wygeneruje ładny, pusty deck.
+
+Stanu trzeciego nie ma. Jeśli po tych pytaniach nadal nie wiesz, do której kategorii trafiasz —
+trafiasz do drugiej. Zbieranie pól nie jest sposobem na dowiedzenie się: pola z Etapów 2-11 tezę
+zakładają, nie produkują, więc rozmowa dojdzie do końca i tak, tyle że z tezą zgadniętą po drodze.
+
+Odpowiedzi zachowaj, nie zadawaj tych pytań drugi raz. Zdanie z pytania 1 to jest treść pola TEZA
+(Etap 5) — zapisujesz je dosłownie. Odpowiedzi 2 i 3 są zalążkiem ŹRÓDEŁ i CELU: w Etapach 2 i 7
+dopytujesz o szczegół, którego brakuje, zamiast pytać od zera.
 
 Zapamiętaj swoją ocenę — wracasz do niej w Etapie 12.
 
@@ -88,7 +110,8 @@ kolejności, jedno pytanie na raz:
 2. **CEL** — jaka decyzja ma zapaść. „Poinformować" odbijaj.
 3. **GRUPA DOCELOWA** — kto na sali, co wie, kto się będzie stawiał.
 4. **FORMA** — mówiony czy czytany bez autora. Rozstrzyga gęstość treści.
-5. **TEZA** — jedno zdanie. Nie da się go napisać → wróć do Etapu 1.
+5. **TEZA** — zdanie z Etapu 1, zapisane dosłownie. Jeśli teraz się rozłazi → brama z Etapu 1 się
+   zamyka: ścieżka Fable.
 6. **NARRACJA** — ścieżka od tezy do decyzji. Rola slajdu po ludzku, nie nazwą archetypu.
 7. **ŹRÓDŁA TREŚCI** — konkretne pliki i dane. Ogólniki odbijaj: z ogólników CD halucynuje liczby.
 8. **TRYB MARKI** — który tryb DSa, light/dark, ile wariantów. Nie pytaj o komponenty — tylko o to.

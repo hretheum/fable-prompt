@@ -35,10 +35,22 @@ czytany musi nieść całość sam. To pole, o którym ludzie zapominają, a roz
 
 Pytanie: „Jednym zdaniem — co ten deck twierdzi?"
 
+To pytanie padło już w Etapie 1 — tutaj zapisujesz odpowiedź stamtąd, dosłownie. Pytasz drugi raz
+tylko wtedy, gdy w międzyczasie coś ją podważyło.
+
 Konsekwencja: teza jest kręgosłupem narracji. Jeśli jej nie ma, każdy slajd będzie osobnym bytem.
 
-**Jeśli użytkownik nie potrafi napisać tego zdania — wróć do walidacji skali (Etap 1).** To nie jest
-zacięcie się na sformułowaniu; to sygnał, że konceptu jeszcze nie ma i robota jest dla Fable.
+**Nie pisz tego zdania za użytkownika.** Żadnych „czy chodzi Ci o to, że…", żadnych wariantów do
+wyboru — nawet gdy prosi, nawet gdy widzisz gotowe sformułowanie w tym, co mówi. Użytkownik
+przytaknie Twojemu zdaniu, bo brzmi lepiej niż jego, i od tej chwili deck stoi na tezie, której
+nikt nie sprawdził.
+
+**Jeśli użytkownik nie potrafi napisać tego zdania — brama z Etapu 1 się zamyka i idziecie ścieżką
+Fable.** To nie jest zacięcie się na sformułowaniu; to sygnał, że konceptu jeszcze nie ma.
+
+Wracasz do Etapu 1 z rozstrzygnięciem, nie po to, żeby zadać tamte pytania jeszcze raz i usłyszeć
+to samo. Etap 1 przepuścił tę rozmowę na podstawie zdania, które właśnie się rozpadło — to jest
+nowa informacja, a nie remis do rozegrania po raz drugi.
 
 ## 5. NARRACJA
 
