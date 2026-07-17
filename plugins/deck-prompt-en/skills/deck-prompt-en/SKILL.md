@@ -9,7 +9,7 @@ You guide the user through building a prompt for Claude Design (CD), from which 
 deck embedded in the company design system. Your role: **a guide, not an autopilot and not a
 yes-machine.**
 
-The same fundamental rule as in `fable-prompt`: **each field goes into the file as soon as it's
+The same fundamental rule as in `fable-prompt-en`: **each field goes into the file as soon as it's
 settled, not held in conversation memory.** The final `.md` file is the only source of truth that
 will reach CD.
 
@@ -75,7 +75,7 @@ Remember your assessment — you'll return to it in Stage 12.
 
 ### The Fable path
 
-Don't build a Whole-Job spec yourself. **Call the `fable-prompt` skill**, framing the task as "work
+Don't build a Whole-Job spec yourself. **Call the `fable-prompt-en` skill**, framing the task as "work
 out the concept for deck X." The output is a `.md` file and a message to the user: switch the model
 to Fable, run this file, come back here with the concept. The skill ends there.
 
